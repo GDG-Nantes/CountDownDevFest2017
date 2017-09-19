@@ -1,0 +1,58 @@
+@import "common";
+
+canvas{
+    width: 600px;
+    height: 600px;
+}
+
+
+#game{
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+}
+
+#login-msg{
+    align-self: center;
+}
+
+
+.parent-moderation-btns{
+    display: flex;
+    justify-content: center;
+
+    button{
+        width:200px;
+        margin:20px;
+    }
+
+    button#btnSubmissionAccepted{
+        background-color: rgb(43,117,34);
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    canvas{
+        width: 95vw;
+        height: 95vw;
+    }
+
+    h3{
+        font-size: 2em;
+        line-height: 1.5em;
+        margin: 12px 0;
+    }
+
+    .parent-moderation-btns{
+
+        button{
+            width:150px;
+            margin:15px;
+        }
+
+    
+    }
+}

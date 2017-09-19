@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Legonnary-Moderator</title>
+    <link rel="stylesheet" type="text/css" href="css/moderator.css">
+
+    <link rel="manifest" href="manifest_moderator.json">
+    <!-- Add to home screen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Legonnary">
+    <link rel="apple-touch-icon" href="./assets/img/launcher_moderator_144.png">
+    <!-- Windows management -->
+    <meta name="msapplication-TileImage" content="./assets/img/launcher_moderator_144.png">
+    <meta name="msapplication-TileColor" content="#673ab7">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="./assets/img/favicon.ico" />
+
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.css" />
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.0/material.deep_purple-red.min.css" />
+    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.js"></script>
+</head>
+
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <img src="./assets/img/lego_painter_128.png">
+                <span class="mdl-layout-title">Legonnary-Moderator</span>
+                <div class="mdl-layout-spacer"></div>
+
+                <nav class="mdl-navigation">
+                    <a id="signout" class="mdl-navigation__link" href="" hidden><i class="material-icons">highlight_off</i></a>
+                </nav>
+
+            </div>
+        </header>
+        <div class="mdl-layout__content">
+            <div class="page-content">
+                <div id="login-msg" class="demo-card-wide mdl-card mdl-shadow--2dp">
+                        <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">Login</h2>
+                    </div>
+                    <div class="mdl-card__supporting-text">
+                        Vous devez vous connecter pour Modérer !
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">                        
+                        <div id="firebaseui-auth-container"></div>
+                    </div>
+                </div>
+                <div id="game" hidden>
+                    <!--<button id="color-picker" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                    <i class="material-icons">color_lens</i>
+                </button>-->
+                    <h3 id="proposition-text"></h3>
+                    <canvas id="canvasDraw"></canvas>
+                    <div class="parent-moderation-btns">
+                        <button id="btnSubmissionRefused" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    Refuser
+                    </button>
+                        <button id="btnSubmissionAccepted" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                    Accepter
+                    </button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://rawgit.com/kangax/fabric.js/master/dist/fabric.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+    <script src="./bundle_moderator.js"></script>
+</body>
+
+</html>

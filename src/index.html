@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Legonnary</title>
+    <link rel="stylesheet" type="text/css" href="css/phone.css">
+
+    <link rel="manifest" href="manifest_phone.json">
+    <!-- Add to home screen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Legonnary">
+    <link rel="apple-touch-icon" href="./assets/img/launcher_144.png">
+    <!-- Windows management -->
+    <meta name="msapplication-TileImage" content="./assets/img/launcher_144.png">
+    <meta name="msapplication-TileColor" content="#ffeb3b">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="./assets/img/favicon.ico" />
+
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.css" />
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.yellow-amber.min.css" />
+    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.js"></script>
+</head>
+
+<body>
+
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <div class="mdl-layout-spacer"></div>
+                <img src="./assets/img/lego_painter_128.png">
+                <span class="mdl-layout-title">Legonnary</span>
+                <div class="mdl-layout-spacer"></div>
+
+                <nav class="mdl-navigation">
+                    <a id="color-picker2" class="mdl-navigation__link" href="" hidden><i class="material-icons">color_lens</i></a>
+                    <a id="help" class="mdl-navigation__link" href="" hidden><i class="material-icons">help</i></a>
+                    <a id="signout" class="mdl-navigation__link" href="" hidden><i class="material-icons">highlight_off</i></a>
+                </nav>
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <img src="./assets/img/lego_painter_128.png" id="img-user" hiddden><span id="name-user" class="mdl-layout-title">Non Connecté</span>
+            <nav class="mdl-navigation">
+                <a class="mdl-navigation__link" id="menu-game" href="#" hidden>Jeu</a>
+                <a class="mdl-navigation__link" id="menu-creations" href="#">Mes créations</a>
+            </nav>
+        </div>
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <div id="login-msg" class="demo-card-wide mdl-card mdl-shadow--2dp">
+                    <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">Login</h2>
+                    </div>
+                    <div class="mdl-card__supporting-text">
+                        Vous devez vous connecter pour Jouer !
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <div id="firebaseui-auth-container"></div>
+                    </div>
+                </div>
+                <div id="hello-msg" class="demo-card-wide mdl-card mdl-shadow--2dp" hidden>
+                    <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">Comment Jouer ?</h2>
+                    </div>
+                    <div class="mdl-card__supporting-text">
+                        Choississez votre pièce et votre couleur à l'aide du bouton de palette dans la barre de menu. Positionnez ensuite votre pièce
+                        sur la grille. Quand votre dessin est terminé, cliquez sur le bouton valider
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <button id="startBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                            Démarrer <i class="material-icons">brush</i>
+                        </button>
+                    </div>
+                </div>
+                <div id="game" hidden>
+                    <canvas id="canvasDraw"></canvas>
+                    <button id="btnSubmission" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    Soumettre
+                    </button>
+                </div>
+                <div id="loading" hidden>
+                    <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+                </div>
+            </div>
+            <div id="submitted" hidden>
+                <div class="parent-img"> <img id="imgSubmission"></div>
+                <div class="parent-btns">                    
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnLeft"> <i class="material-icons">keyboard_arrow_left</i></button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnRight"> <i class="material-icons">keyboard_arrow_right</i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://rawgit.com/kangax/fabric.js/master/dist/fabric.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+    <script src="./bundle_phone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.min.js"></script>
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-84594096-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</body>
+
+</html>

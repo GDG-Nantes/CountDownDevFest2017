@@ -1,0 +1,135 @@
+@import "common";
+
+canvas{
+    width: 600px;
+    height: 700px;
+}
+
+@media only screen and (max-width: 768px) {
+    canvas{
+        width: 95vw;
+        height: calc(95vw + 60px);
+    }
+}
+
+
+#color-picker{
+    position:absolute;
+    right:10px;
+    top:50px;
+}
+
+#hello-msg{
+    align-self: center;
+}
+
+#login-msg{
+    align-self: center;
+}
+
+.canvas-container{
+    align-self:center;
+
+    canvas {
+        border-width: 0px;
+        box-shadow: inherit;
+    }
+}
+
+#game{
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+
+    button{
+        align-self: center;
+        width:200px;
+        margin: 20px;
+    }
+}
+
+$img-user : 80px;
+
+#img-user{
+    width:$img-user;
+    height: $img-user;
+    border-radius: $img-user;
+    background-size:cover;
+    border: thin solid black;
+    align-self: center;
+    margin-top: 10px;
+}
+
+
+#loading{
+    background: rgba(0,0,0,0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+#submitted{
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+
+    .parent-img{
+        margin-top: 50px;
+    }
+
+    .parent-img::after{
+        content:'Dessin rejeté';
+        position: absolute;
+        top: 10px;
+        left: 0;
+        text-align: center;
+        font-style: normal;
+        text-transform: none;
+        line-height: 1;
+        font-size: 24px;
+        width: 100%;
+        height: 24px;
+        display: inline-block;
+    }
+
+    .parent-img.accepted::after{
+        content:'Dessin accepté';
+    }
+
+    img{
+        width:calc(100% - 20px);
+        margin: 0 10px;
+    }
+
+    .parent-btns{
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        margin: 20px;
+        button{
+            margin:30px;
+        }
+    }
+}

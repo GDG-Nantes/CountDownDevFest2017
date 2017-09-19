@@ -1,0 +1,60 @@
+@import "font";
+
+html, body{
+    margin:0;
+    padding:0;
+    display: flex;
+    background : #EFEFEF;
+
+    font-family: 'lego';
+}
+
+
+canvas{
+    border: thin solid #ccc;
+    border-radius:10px;
+    box-shadow: 5px 4px 5px #888888;
+}
+
+.mdl-layout__header-row{
+    img{ 
+        max-height: 90%;
+        margin-right: 20px;
+        left: 0px;
+        position:relative;
+    }
+} 
+
+.mdl-layout .mdl-layout__content{
+    display: flex;
+    
+    .page-content{
+        display: flex;
+        flex:1; 
+        justify-content: center;
+        flex-direction: column;
+        position:relative;
+                
+                
+    }
+}
+
+.center{
+    text-align: center;
+}
+
+button.firebaseui-idp-button.mdl-button.mdl-js-button.mdl-button--raised.firebaseui-idp-twitter.firebaseui-id-idp-button{
+    background-color: #55acee;
+}
+
+button.firebaseui-idp-button.mdl-button.mdl-js-button.mdl-button--raised.firebaseui-idp-github.firebaseui-id-idp-button{
+    background-color: #333333;
+}
+
+button.firebaseui-idp-button.mdl-button.mdl-js-button.mdl-button--raised.firebaseui-idp-password.firebaseui-id-idp-button{
+    background-color: #db4437;
+}
+
+button.firebaseui-idp-button.mdl-button.mdl-js-button.mdl-button--raised.firebaseui-idp-facebook.firebaseui-id-idp-button{
+    background-color: #3b5998;
+}
