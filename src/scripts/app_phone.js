@@ -1,21 +1,31 @@
 'use strict'
-import {LEGO_COLORS} from './common/legoColors.js';
-import {BASE_LEGO_COLOR} from './common/const.js';
-import {FireBaseLegoApp} from './firebase/firebase.js';
-import {FireBaseAuth} from './firebase/firebaseAuth.js';
-import {LegoGridCanvas} from './canvas/legoCanvas.js';
+import {
+    COLORS
+} from './common/colors.js';
+import {
+    BASE_COLOR
+} from './common/const.js';
+import {
+    FireBaseLegoApp
+} from './firebase/firebase.js';
+import {
+    FireBaseAuth
+} from './firebase/firebaseAuth.js';
+import {
+    LegoGridCanvas
+} from './canvas/legoCanvas.js';
 
 
 (function () {
 
-    let gameInit = false,// true if we init the legoGrid
+    let gameInit = false, // true if we init the legoGrid
         fireBaseLego = null, // the reference of the fireBaseApp
         legoCanvas = null, // The legoGrid
-        keys = null, // The keys of firenase submit draw 
+        keys = null, // The keys of firenase submit draw
         snapshotFb = null, // The snapshot of submit draw
-        index = 0; 
+        index = 0;
 
-    
+
     function initGame() {
 
         legoCanvas = new LegoGridCanvas('canvasDraw', true);
@@ -23,8 +33,8 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
         $("#color-picker2").spectrum({
             showPaletteOnly: true,
             showPalette: true,
-            color: BASE_LEGO_COLOR,
-            palette: LEGO_COLORS,
+            color: BASE_COLOR,
+            palette: COLORS,
             change: function (color) {
                 legoCanvas.changeColor(color.toHexString());
             }
@@ -34,7 +44,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
     function pageLoad() {
 
         fireBaseLego = new FireBaseLegoApp().app;
-        // We init the authentication object 
+        // We init the authentication object
         let fireBaseAuth = new FireBaseAuth({
             idDivLogin: 'login-msg',
             idNextDiv: 'hello-msg',
@@ -68,8 +78,8 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
                         document.getElementById('loading').removeAttribute('hidden');
                         // Timeout needed to start the rendering of loading animation (else will not be show)
                         setTimeout(function () {
-                                gameInit = true;
-                                initGame();
+                            gameInit = true;
+                            initGame();
                             document.getElementById('loading').setAttribute('hidden', '')
                         }, 50);
                     }
@@ -87,7 +97,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
          */
 
         document.getElementById('btnSubmission').addEventListener('click', () => {
-            // When we submit a draw, we save it on firebase tree                        
+            // When we submit a draw, we save it on firebase tree
             fireBaseLego.database().ref("/draw").push(legoCanvas.export(fireBaseAuth.displayName(), fireBaseAuth.userId()));
             legoCanvas.resetBoard();
         });
@@ -98,7 +108,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
 
         const menuGame = document.getElementById('menu-game');
         const menuCreations = document.getElementById('menu-creations');
-        
+
 
         const streamGame = Rx.Observable
             .fromEvent(menuGame, 'click')
@@ -110,7 +120,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
 
         streamGame.merge(streamCreations)
             .subscribe((state) => {
-                if (state === 'game'){
+                if (state === 'game') {
                     document.querySelector('.page-content').removeAttribute('hidden');
                     document.getElementById('submitted').setAttribute('hidden', '');
                     document.getElementById('menu-game').setAttribute('hidden', '');
@@ -118,7 +128,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
                     document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
                     document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
 
-                }else if (state === 'creations'){
+                } else if (state === 'creations') {
                     document.querySelector('.page-content').setAttribute('hidden', '');
                     document.getElementById('submitted').removeAttribute('hidden');
                     document.getElementById('menu-game').removeAttribute('hidden');
@@ -145,7 +155,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
                 }
             });
 
-        
+
         /**
          * Management of Buttons for changing of draw
          */
@@ -154,11 +164,11 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
         const btnRight = document.getElementById('btnRight');
 
         const streamBtnLeft = Rx.Observable
-            .fromEvent(btnLeft,'click',()=>index = Math.max(index - 1, 0));
-        const streamBtnRight =  Rx.Observable
-            .fromEvent(btnRight, 'click',()=>index = Math.min(index + 1, keys.length - 1));
+            .fromEvent(btnLeft, 'click', () => index = Math.max(index - 1, 0));
+        const streamBtnRight = Rx.Observable
+            .fromEvent(btnRight, 'click', () => index = Math.min(index + 1, keys.length - 1));
 
-       streamBtnLeft.merge(streamBtnRight).subscribe(draw);
+        streamBtnLeft.merge(streamBtnRight).subscribe(draw);
 
 
     }
@@ -173,7 +183,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
         imgSubmission.src = draw.dataUrl;
         if (draw.accepted && !parentImg.classList.contains('accepted')) {
             parentImg.classList.add('accepted');
-        } else if (!draw.accepted){
+        } else if (!draw.accepted) {
             parentImg.classList.remove('accepted');
         }
 
@@ -183,7 +193,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
     window.addEventListener('load', pageLoad);
 
     /* SERVICE_WORKER_REPLACE
-    if ('serviceWorker' in navigator) {        
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker-phone.js', {scope : location.pathname}).then(function(reg) {
             console.log('Service Worker Register for scope : %s',reg.scope);
         });

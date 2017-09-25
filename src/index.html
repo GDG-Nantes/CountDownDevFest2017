@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Legonnary</title>
+    <title>DevFest Draw</title>
     <link rel="stylesheet" type="text/css" href="css/phone.css">
 
     <link rel="manifest" href="manifest_phone.json">
     <!-- Add to home screen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Legonnary">
+    <meta name="apple-mobile-web-app-title" content="DevFest Draw">
     <link rel="apple-touch-icon" href="./assets/img/launcher_144.png">
     <!-- Windows management -->
     <meta name="msapplication-TileImage" content="./assets/img/launcher_144.png">
@@ -23,8 +23,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.css" />
-    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.yellow-amber.min.css" />
-    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-red.min.css" />
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.js"></script>
@@ -37,8 +37,8 @@
             <div class="mdl-layout__header-row">
                 <!-- Title -->
                 <div class="mdl-layout-spacer"></div>
-                <img src="./assets/img/lego_painter_128.png">
-                <span class="mdl-layout-title">Legonnary</span>
+                <img src="./assets/img/icon_128.png">
+                <span class="mdl-layout-title">DevFest-Draw</span>
                 <div class="mdl-layout-spacer"></div>
 
                 <nav class="mdl-navigation">
@@ -49,7 +49,7 @@
             </div>
         </header>
         <div class="mdl-layout__drawer">
-            <img src="./assets/img/lego_painter_128.png" id="img-user" hiddden><span id="name-user" class="mdl-layout-title">Non Connecté</span>
+            <img src="./assets/img/icon_128.png" id="img-user" hiddden><span id="name-user" class="mdl-layout-title">Non Connecté</span>
             <nav class="mdl-navigation">
                 <a class="mdl-navigation__link" id="menu-game" href="#" hidden>Jeu</a>
                 <a class="mdl-navigation__link" id="menu-creations" href="#">Mes créations</a>
@@ -94,7 +94,7 @@
             </div>
             <div id="submitted" hidden>
                 <div class="parent-img"> <img id="imgSubmission"></div>
-                <div class="parent-btns">                    
+                <div class="parent-btns">
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnLeft"> <i class="material-icons">keyboard_arrow_left</i></button>
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnRight"> <i class="material-icons">keyboard_arrow_right</i></button>
                 </div>
@@ -107,14 +107,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.min.js"></script>
 
     <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
         ga('create', 'UA-84594096-1', 'auto');
         ga('send', 'pageview');
-
     </script>
 </body>
 
