@@ -1,7 +1,7 @@
 'use strict'
 import {FireBaseLegoApp} from './firebase/firebase.js';
 import {FireBaseAuth} from './firebase/firebaseAuth.js';
-import {LegoGridCanvas} from './canvas/legoCanvas.js';
+import {DrawCanvas} from './canvas/drawCanvas.js';
 import {AudioPlayer} from './audio/player.js';
 import {VideoPlayer} from './video/player.js';
 
@@ -23,7 +23,7 @@ import {VideoPlayer} from './video/player.js';
 
     function initGame() {
 
-        legoCanvas = new LegoGridCanvas('canvasDraw', false);
+        legoCanvas = new DrawCanvas('canvasDraw', false);
 
         getNextDraw();
 
@@ -70,7 +70,7 @@ import {VideoPlayer} from './video/player.js';
                 imgParent.style.top = `calc(100px + ${verticalDist}px)`;
                 imgParent.style.left = `${horizontalDist}px`;
                 if (!lastLeft) { // True if the last photo was placed at the left of the countDown
-                    imgParent.style.left = `calc(100vw - ${horizontalDist}px - 300px)`;           // The timeout date          
+                    imgParent.style.left = `calc(100vw - ${horizontalDist}px - 300px)`;           // The timeout date
                 }
                 lastLeft = !lastLeft; // True if the last photo was placed at the left of the countDown
                 let angle = angleChoice === 1 ? -9 : angleChoice === 2 ? 14 : 0; // The timeout date
@@ -193,11 +193,11 @@ import {VideoPlayer} from './video/player.js';
         opacity.style.display = '';
         setTimeout(_=>{
             opacityElt.classList.add('black');
-            setTimeout(()=>new VideoPlayer(opacityElt, ()=>console.log('end')).playVideo(), 4000);            
+            setTimeout(()=>new VideoPlayer(opacityElt, ()=>console.log('end')).playVideo(), 4000);
         }, 100);
     }
 
-    
+
 
 
     window.addEventListener('load', pageLoad);

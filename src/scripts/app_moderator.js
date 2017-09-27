@@ -1,7 +1,7 @@
 'use strict'
 import {FireBaseLegoApp} from './firebase/firebase.js';
 import {FireBaseAuth} from './firebase/firebaseAuth.js';
-import {LegoGridCanvas} from './canvas/legoCanvas.js';
+import {DrawCanvas} from './canvas/drawCanvas.js';
 
 (function () {
 
@@ -10,11 +10,11 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
      legoCanvas = null,  // The legoGrid
      currentKey = null, // The curent firebase draw key
      currentDraw = null, // The curent firebase draw
-     readyForNewDraw = true; 
+     readyForNewDraw = true;
 
 
     function initGame(){
-        legoCanvas = new LegoGridCanvas('canvasDraw', false);
+        legoCanvas = new DrawCanvas('canvasDraw', false);
         getNextDraw();
     }
 
@@ -22,12 +22,12 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
     function pageLoad() {
 
         fireBaseLego = new FireBaseLegoApp().app;
-        // We init the authentication object 
+        // We init the authentication object
         let fireBaseAuth = new FireBaseAuth({
-            idDivLogin: 'login-msg', 
-            idNextDiv : 'game', 
+            idDivLogin: 'login-msg',
+            idNextDiv : 'game',
             idLogout : 'signout'
-        }); 
+        });
 
         // We start to play only when we are logged
         fireBaseAuth.onAuthStateChanged((user)=> {
@@ -90,7 +90,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
             legoCanvas.resetBoard();
             getNextDraw();
         });
-        
+
     }
 
     /**
@@ -112,7 +112,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
                 readyForNewDraw = true;
                 document.getElementById('proposition-text').innerHTML = "En attente de proposition";
             }
-            
+
         }, function(err) {
             console.error(err);
         // error callback triggered with PERMISSION_DENIED
@@ -123,7 +123,7 @@ import {LegoGridCanvas} from './canvas/legoCanvas.js';
     window.addEventListener('load', pageLoad);
 
     /* SERVICE_WORKER_REPLACE
-    if ('serviceWorker' in navigator) {        
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker-moderator.js', {scope : location.pathname}).then(function(reg) {
             console.log('Service Worker Register for scope : %s',reg.scope);
         });

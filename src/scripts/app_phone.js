@@ -12,15 +12,15 @@ import {
     FireBaseAuth
 } from './firebase/firebaseAuth.js';
 import {
-    LegoGridCanvas
-} from './canvas/legoCanvas.js';
+    DrawCanvas
+} from './canvas/drawCanvas.js';
 
 
 (function () {
 
     let gameInit = false, // true if we init the legoGrid
         fireBaseLego = null, // the reference of the fireBaseApp
-        legoCanvas = null, // The legoGrid
+        drawCanvas = null, // The legoGrid
         keys = null, // The keys of firenase submit draw
         snapshotFb = null, // The snapshot of submit draw
         index = 0;
@@ -28,7 +28,7 @@ import {
 
     function initGame() {
 
-        legoCanvas = new LegoGridCanvas('canvasDraw', true);
+        drawCanvas = new DrawCanvas('canvasDraw', true);
 
         $("#color-picker2").spectrum({
             showPaletteOnly: true,
@@ -36,7 +36,7 @@ import {
             color: BASE_COLOR,
             palette: COLORS,
             change: function (color) {
-                legoCanvas.changeColor(color.toHexString());
+                drawCanvas.changeColor(color.toHexString());
             }
         });
     }
@@ -98,8 +98,8 @@ import {
 
         document.getElementById('btnSubmission').addEventListener('click', () => {
             // When we submit a draw, we save it on firebase tree
-            fireBaseLego.database().ref("/draw").push(legoCanvas.export(fireBaseAuth.displayName(), fireBaseAuth.userId()));
-            legoCanvas.resetBoard();
+            fireBaseLego.database().ref("/draw").push(drawCanvas.export(fireBaseAuth.displayName(), fireBaseAuth.userId()));
+            drawCanvas.resetBoard();
         });
 
         /**

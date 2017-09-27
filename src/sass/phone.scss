@@ -29,11 +29,6 @@ canvas{
 
 .canvas-container{
     align-self:center;
-
-    canvas {
-        border-width: 0px;
-        box-shadow: inherit;
-    }
 }
 
 #game{
@@ -47,6 +42,15 @@ canvas{
         align-self: center;
         width:200px;
         margin: 20px;
+    }
+
+    header{
+        display: flex;
+        flex-direction: row;
+
+        button{
+            width: inherit;
+        }
     }
 }
 
