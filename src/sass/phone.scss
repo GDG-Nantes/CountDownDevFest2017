@@ -1,13 +1,13 @@
 @import "common";
 canvas {
     width: 600px;
-    height: 700px;
+    height: 600px;
 }
 
 @media only screen and (max-width: 768px) {
     canvas {
         width: 95vw;
-        height: calc(95vw + 60px);
+        height: 95vw;
     }
 }
 
