@@ -1,17 +1,27 @@
 'use strict'
-import {FireBaseLegoApp} from './firebase/firebase.js';
-import {FireBaseAuth} from './firebase/firebaseAuth.js';
-import {DrawCanvas} from './canvas/drawCanvas.js';
-import {AudioPlayer} from './audio/player.js';
-import {VideoPlayer} from './video/player.js';
+import {
+    FireBaseLegoApp
+} from './firebase/firebase.js';
+import {
+    FireBaseAuth
+} from './firebase/firebaseAuth.js';
+import {
+    DrawCanvas
+} from './canvas/drawCanvas.js';
+import {
+    AudioPlayer
+} from './audio/player.js';
+import {
+    VideoPlayer
+} from './video/player.js';
 
 (function () {
 
-    let gameInit = false,// true if we init the legoGrid
-        fireBaseLego = null,// the reference of the fireBaseApp
+    let gameInit = false, // true if we init the legoGrid
+        fireBaseLego = null, // the reference of the fireBaseApp
         legoCanvas = null, // The legoGrid
         currentKey = null, // The curent firebase draw key
-        currentDraw = null,// The curent firebase draw
+        currentDraw = null, // The curent firebase draw
         minutesElt = null, // Html element for minutes
         secondsElt = null, // Html element for seconds
         countDownParentElt = null, // Html element parent of minutes and seconds
@@ -70,7 +80,7 @@ import {VideoPlayer} from './video/player.js';
                 imgParent.style.top = `calc(100px + ${verticalDist}px)`;
                 imgParent.style.left = `${horizontalDist}px`;
                 if (!lastLeft) { // True if the last photo was placed at the left of the countDown
-                    imgParent.style.left = `calc(100vw - ${horizontalDist}px - 300px)`;           // The timeout date
+                    imgParent.style.left = `calc(100vw - ${horizontalDist}px - 300px)`; // The timeout date
                 }
                 lastLeft = !lastLeft; // True if the last photo was placed at the left of the countDown
                 let angle = angleChoice === 1 ? -9 : angleChoice === 2 ? 14 : 0; // The timeout date
@@ -119,7 +129,7 @@ import {VideoPlayer} from './video/player.js';
 
         // To remove if you want to use the target date define at the top of the class
         targetDate = moment(), // The timeout date
-        targetDate.add(30, 'minutes');
+            targetDate.add(30, 'minutes');
         //targetDate.add(5, 'seconds');
         // We start our text animation
         window.requestAnimationFrame(checkTime);
@@ -136,12 +146,18 @@ import {VideoPlayer} from './video/player.js';
             endCountDown();
         } else {
             let diff = targetDate.diff(moment());
-            minutesElt.innerHTML = new Intl.NumberFormat("fr", { minimumIntegerDigits: 2, useGrouping: false })
+            minutesElt.innerHTML = new Intl.NumberFormat("fr", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false
+                })
                 .format(Math.floor(diff / (60 * 1000)));
-            secondsElt.innerHTML = new Intl.NumberFormat("fr", { minimumIntegerDigits: 2, useGrouping: false })
+            secondsElt.innerHTML = new Intl.NumberFormat("fr", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false
+                })
                 .format(Math.floor(diff % (60 * 1000) / 1000));
             audioPlayer.manageSoundVolume(diff);
-            if (diff < 60 * 1000){
+            if (diff < 60 * 1000) {
                 countDownParentElt.classList.add('last-minute');
             }
 
@@ -154,7 +170,7 @@ import {VideoPlayer} from './video/player.js';
      * Show the next draw
      */
     function getNextDraw() {
-        if (endShow){
+        if (endShow) {
             return;
         }
         readyForNewDraw = false;
@@ -166,7 +182,7 @@ import {VideoPlayer} from './video/player.js';
                 let keys = Object.keys(snapshotFb);
                 currentKey = keys[0];
                 currentDraw = snapshotFb[keys[0]];
-                legoCanvas.drawInstructions(currentDraw);
+                legoCanvas.drawInstructions(currentDraw.instructions);
 
                 document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
                 setTimeout(() => {
@@ -188,12 +204,12 @@ import {VideoPlayer} from './video/player.js';
     }
 
 
-    function endCountDown(){
+    function endCountDown() {
         const opacityElt = document.getElementById('opacity');
         opacity.style.display = '';
-        setTimeout(_=>{
+        setTimeout(_ => {
             opacityElt.classList.add('black');
-            setTimeout(()=>new VideoPlayer(opacityElt, ()=>console.log('end')).playVideo(), 4000);
+            setTimeout(() => new VideoPlayer(opacityElt, () => console.log('end')).playVideo(), 4000);
         }, 100);
     }
 

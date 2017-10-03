@@ -108,6 +108,10 @@ import {
 
         const menuGame = document.getElementById('menu-game');
         const menuCreations = document.getElementById('menu-creations');
+        const menuSlider = document.getElementById('slider-width');
+        const menuEraser = document.getElementById('menuEraser');
+        const menuBrush = document.getElementById('menuBrush');
+        const menuClear = document.getElementById('menuClear');
 
 
         const streamGame = Rx.Observable
@@ -118,7 +122,22 @@ import {
             .fromEvent(menuCreations, 'click')
             .map(() => 'creations');
 
+        const streamEraser = Rx.Observable
+            .fromEvent(menuEraser, 'click')
+            .map(() => 'eraser');
+
+        const streamBrush = Rx.Observable
+            .fromEvent(menuBrush, 'click')
+            .map(() => 'brush');
+
+        const streamClear = Rx.Observable
+            .fromEvent(menuClear, 'click')
+            .map(() => 'clear');
+
         streamGame.merge(streamCreations)
+            .merge(streamEraser)
+            .merge(streamBrush)
+            .merge(streamClear)
             .subscribe((state) => {
                 if (state === 'game') {
                     document.querySelector('.page-content').removeAttribute('hidden');
@@ -152,8 +171,28 @@ import {
                         // error callback triggered with PERMISSION_DENIED
                     });
 
+                } else if (state === 'eraser') {
+                    if (!menuEraser.classList.contains('mdl-button--colored')) {
+                        menuEraser.classList.add('mdl-button--colored');
+                        menuBrush.classList.remove('mdl-button--colored');
+                        drawCanvas.toggleEraser();
+                    }
+
+                } else if (state === 'brush') {
+                    if (!menuBrush.classList.contains('mdl-button--colored')) {
+                        menuBrush.classList.add('mdl-button--colored');
+                        menuEraser.classList.remove('mdl-button--colored');
+                        drawCanvas.toggleEraser();
+                    }
+
+                } else if (state === 'clear') {
+                    drawCanvas.resetBoard();
                 }
             });
+
+        menuSlider.addEventListener('change', (event) => {
+            drawCanvas.changeWidth(menuSlider.value);
+        });
 
 
         /**

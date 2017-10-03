@@ -1,74 +1,69 @@
 @import "common";
-
-canvas{
+canvas {
     width: 600px;
     height: 700px;
 }
 
 @media only screen and (max-width: 768px) {
-    canvas{
+    canvas {
         width: 95vw;
         height: calc(95vw + 60px);
     }
 }
 
-
-#color-picker{
-    position:absolute;
-    right:10px;
-    top:50px;
+#color-picker {
+    position: absolute;
+    right: 10px;
+    top: 50px;
 }
 
-#hello-msg{
+#hello-msg {
     align-self: center;
 }
 
-#login-msg{
+#login-msg {
     align-self: center;
 }
 
-.canvas-container{
-    align-self:center;
+.canvas-container {
+    align-self: center;
 }
 
-#game{
+#game {
     display: flex;
     flex: 1;
     justify-content: center;
     flex-direction: column;
     position: relative;
-
-    button{
+    button {
         align-self: center;
-        width:200px;
+        width: 200px;
         margin: 20px;
     }
-
-    header{
+    header {
         display: flex;
         flex-direction: row;
-
-        button{
+        align-items: center;
+        justify-content: center;
+        button {
             width: inherit;
         }
     }
 }
 
-$img-user : 80px;
-
-#img-user{
-    width:$img-user;
+$img-user: 80px;
+#img-user {
+    width: $img-user;
     height: $img-user;
     border-radius: $img-user;
-    background-size:cover;
+    background-size: cover;
     border: thin solid black;
     align-self: center;
     margin-top: 10px;
 }
 
-
-#loading{
-    background: rgba(0,0,0,0.5);
+#loading {
+    background: rgba(0, 0, 0, 0.5);
     position: absolute;
     top: 0;
     left: 0;
@@ -83,8 +78,7 @@ $img-user : 80px;
     align-items: center;
 }
 
-
-#submitted{
+#submitted {
     position: absolute;
     top: 0;
     left: 0;
@@ -97,13 +91,11 @@ $img-user : 80px;
     justify-content: space-between;
     flex-direction: column;
     align-items: center;
-
-    .parent-img{
+    .parent-img {
         margin-top: 50px;
     }
-
-    .parent-img::after{
-        content:'Dessin rejeté';
+    .parent-img::after {
+        content: 'Dessin rejeté';
         position: absolute;
         top: 10px;
         left: 0;
@@ -116,24 +108,21 @@ $img-user : 80px;
         height: 24px;
         display: inline-block;
     }
-
-    .parent-img.accepted::after{
-        content:'Dessin accepté';
+    .parent-img.accepted::after {
+        content: 'Dessin accepté';
     }
-
-    img{
-        width:calc(100% - 20px);
+    img {
+        width: calc(100% - 20px);
         margin: 0 10px;
     }
-
-    .parent-btns{
+    .parent-btns {
         display: flex;
         justify-content: space-between;
         flex-direction: row;
         align-items: center;
         margin: 20px;
-        button{
-            margin:30px;
+        button {
+            margin: 30px;
         }
     }
 }

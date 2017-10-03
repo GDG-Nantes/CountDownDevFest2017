@@ -30,6 +30,8 @@ export class DrawCanvas {
         this.canvasElt.height = this.canvasRect.width + this.headerHeight;
         // We calculate the cellsize according to the space taken by the canvas
         this.cellSize = Math.round(this.canvasRect.width / NB_CELLS);
+        // toggle eraser
+        this.eraserMode = false;
 
         // We initialize the Fabric JS library with our canvas
         this.canvas = new fabric.Canvas(id, {
@@ -46,7 +48,7 @@ export class DrawCanvas {
         this.lastColor = BASE_COLOR;
 
 
-        if (drawingMode){
+        if (drawingMode) {
             this.canvas.freeDrawingBrush = new fabric['PencilBrush'](this.canvas);
             this.canvas.freeDrawingBrush.color = BASE_COLOR;
             this.canvas.freeDrawingBrush.width = 30;
@@ -58,14 +60,30 @@ export class DrawCanvas {
     }
 
     /**
+     * Method that change the size of pointer
+     * @param {number} width
+     */
+    changeWidth(width) {
+        this.canvas.freeDrawingBrush.width = width;
+        this.canvas.renderAll();
+    }
+
+    toggleEraser() {
+        this.eraserMode = !this.eraserMode;
+        if (this.eraserMode) {
+            this.canvas.freeDrawingBrush.color = '#FFFFFF';
+        } else {
+            this.canvas.freeDrawingBrush.color = this.lastColor;
+        }
+        this.canvas.renderAll();
+    }
+
+    /**
      * Method for changing the color of the first row
      */
     changeColor(color) {
         this.lastColor = color;
-        this.rowSelect.square.changeColor(color);
-        this.rowSelect.bigSquare.changeColor(color);
-        this.rowSelect.rect.changeColor(color);
-        this.rowSelect.vertRect.changeColor(color);
+        this.canvas.freeDrawingBrush.color = color;
         this.canvas.renderAll();
     }
 
@@ -73,28 +91,10 @@ export class DrawCanvas {
      * Serialize the canvas to a minimal object that could be treat after
      */
     export (userName, userId) {
-        let resultArray = [];
-        // We filter the row pegs
-        let keys = Object.keys(this.brickModel)
-            .filter((key) => key != this.rowSelect.square.id &&
-                key != this.rowSelect.bigSquare.id &&
-                key != this.rowSelect.rect.id &&
-                key != this.rowSelect.vertRect.id);
-        keys.forEach((key) => {
-            let pegTmp = this.brickModel[key];
-            resultArray.push({
-                size: pegTmp.size,
-                color: pegTmp.color,
-                angle: pegTmp.angle,
-                top: pegTmp.top - this.headerHeight,
-                left: pegTmp.left,
-                cellSize: this.cellSize
-            });
-        });
         return {
             user: userName,
             userId: userId,
-            instructions: resultArray
+            instructions: JSON.stringify(this.canvas)
         };
     }
 
@@ -105,7 +105,7 @@ export class DrawCanvas {
         this.resetBoard();
         this.canvas.renderOnAddRemove = false;
 
-
+        this.canvas.loadFromJSON(instructionObject);
         this.canvas.renderAll();
         this.canvas.renderOnAddRemove = true;
     }
