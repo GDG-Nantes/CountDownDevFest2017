@@ -1,0 +1,18 @@
+html {
+    font-family: "Stanberry";
+    .mdl-layout__header .mdl-layout__title,
+    .mdl-layout__header .mdl-layout-title {
+        font-family: "Crazy";
+        text-transform: uppercase;
+    }
+    main,
+    .mdl-layout__drawer {
+        font-family: "Stanberry";
+        button.mdl-button {
+            font-family: "Crazy";
+        }
+        #firebaseui-auth-container button.mdl-button {
+            font-family: "Stanberry";
+        }
+    }
+}

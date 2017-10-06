@@ -5,7 +5,7 @@ body {
     padding: 0;
     display: flex;
     background: #EFEFEF;
-    font-family: 'Stanberry';
+    font-family: 'Crazy';
 }
 
 canvas {
@@ -53,3 +53,5 @@ button.firebaseui-idp-button.mdl-button.mdl-js-button.mdl-button--raised.firebas
 button.firebaseui-idp-button.mdl-button.mdl-js-button.mdl-button--raised.firebaseui-idp-facebook.firebaseui-id-idp-button {
     background-color: #3b5998;
 }
+
+@import "force-font"
