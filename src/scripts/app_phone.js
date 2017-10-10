@@ -6,7 +6,7 @@ import {
     BASE_COLOR
 } from './common/const.js';
 import {
-    FireBaseLegoApp
+    FireBaseApp
 } from './firebase/firebase.js';
 import {
     FireBaseAuth
@@ -19,7 +19,7 @@ import {
 (function () {
 
     let gameInit = false, // true if we init the legoGrid
-        fireBaseLego = null, // the reference of the fireBaseApp
+        fireBaseApp = null, // the reference of the fireBaseApp
         drawCanvas = null, // The legoGrid
         keys = null, // The keys of firenase submit draw
         snapshotFb = null, // The snapshot of submit draw
@@ -43,7 +43,7 @@ import {
 
     function pageLoad() {
 
-        fireBaseLego = new FireBaseLegoApp().app;
+        fireBaseApp = new FireBaseApp().app;
         // We init the authentication object
         let fireBaseAuth = new FireBaseAuth({
             idDivLogin: 'login-msg',
@@ -98,7 +98,7 @@ import {
 
         document.getElementById('btnSubmission').addEventListener('click', () => {
             // When we submit a draw, we save it on firebase tree
-            fireBaseLego.database().ref("/draw").push(drawCanvas.export(fireBaseAuth.displayName(), fireBaseAuth.userId()));
+            fireBaseApp.database().ref("/draw").push(drawCanvas.export(fireBaseAuth.displayName(), fireBaseAuth.userId()));
             drawCanvas.resetBoard();
         });
 
@@ -155,7 +155,7 @@ import {
                     document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
                     document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
 
-                    fireBaseLego.database().ref(`drawSaved/${fireBaseAuth.userId()}`).once('value', function (snapshot) {
+                    fireBaseApp.database().ref(`drawSaved/${fireBaseAuth.userId()}`).once('value', function (snapshot) {
                         if (snapshot && snapshot.val()) {
                             console.log(snapshot.val());
                             snapshotFb = snapshot.val();

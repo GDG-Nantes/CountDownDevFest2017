@@ -1,6 +1,6 @@
 'use strict'
 import {
-    FireBaseLegoApp
+    FireBaseApp
 } from './firebase/firebase.js';
 import {
     FireBaseAuth
@@ -18,7 +18,7 @@ import {
 (function () {
 
     let gameInit = false, // true if we init the legoGrid
-        fireBaseLego = null, // the reference of the fireBaseApp
+        fireBaseApp = null, // the reference of the fireBaseApp
         legoCanvas = null, // The legoGrid
         currentKey = null, // The curent firebase draw key
         currentDraw = null, // The curent firebase draw
@@ -100,7 +100,7 @@ import {
 
         audioPlayer = new AudioPlayer();
 
-        fireBaseLego = new FireBaseLegoApp().app;
+        fireBaseApp = new FireBaseApp().app;
         let fireBaseAuth = new FireBaseAuth({
             idDivLogin: 'login-msg',
             idNextDiv: 'game',
@@ -117,7 +117,7 @@ import {
             }
         });
 
-        fireBaseLego.database().ref('drawValidated').on('child_added', function (data) {
+        fireBaseApp.database().ref('drawValidated').on('child_added', function (data) {
             if (readyForNewDraw) {
                 getNextDraw();
             }
@@ -174,7 +174,7 @@ import {
             return;
         }
         readyForNewDraw = false;
-        fireBaseLego.database().ref('drawValidated').once('value', function (snapshot) {
+        fireBaseApp.database().ref('drawValidated').once('value', function (snapshot) {
             if (snapshot && snapshot.val()) {
                 // First we get the draw
                 currentDraw = snapshot;
@@ -188,7 +188,7 @@ import {
                 setTimeout(() => {
                     // After we update the draw
                     let dataUrl = legoCanvas.snapshot();
-                    fireBaseLego.database().ref(`drawValidated/${currentKey}`).remove();
+                    fireBaseApp.database().ref(`drawValidated/${currentKey}`).remove();
                     // We finaly generate the image
                     generateSnapshot(currentDraw.user, legoCanvas.snapshot())
                 }, 2000);

@@ -1,5 +1,7 @@
 'use strict'
-import {FireBaseLegoApp} from './firebase/firebase.js';
+import {
+    FireBaseApp
+} from './firebase/firebase.js';
 
 (function () {
 
@@ -7,16 +9,22 @@ import {FireBaseLegoApp} from './firebase/firebase.js';
 
     function pageLoad() {
 
-        let fireBaseLego = new FireBaseLegoApp().app;
+        let fireBaseApp = new FireBaseApp().app;
 
-        fireBaseLego.database().ref('drawShow').once('value', function (snapshot) {
+        fireBaseApp.database().ref('drawShow').once('value', function (snapshot) {
             if (snapshot && snapshot.val()) {
                 let snapshotFb = snapshot.val();
                 let keys = Object.keys(snapshotFb);
                 let domParent = document.createElement('section');
                 domParent.classList.add('parent-snapshots');
-                keys.forEach((key) => addElement(snapshotFb[key], domParent));
-                
+                keys.forEach((key) => {
+                    const drawRef = fireBaseApp.storage().ref(snapshotFb[key].urlDataStore);
+                    drawRef.getDownloadURL().then(url => {
+                        snapshotFb[key].dataUrl = url;
+                        addElement(snapshotFb[key], domParent)
+                    });
+                });
+
                 document.getElementById('game').appendChild(domParent);
             }
 

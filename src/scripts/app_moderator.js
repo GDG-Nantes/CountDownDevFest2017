@@ -1,6 +1,6 @@
 'use strict'
 import {
-    FireBaseLegoApp
+    FireBaseApp
 } from './firebase/firebase.js';
 import {
     FireBaseAuth
@@ -12,22 +12,22 @@ import {
 (function () {
 
     let gameInit = false, // true if we init the legoGrid
-        fireBaseLego = null, // the reference of the fireBaseApp
-        legoCanvas = null, // The legoGrid
+        fireBaseApp = null, // the reference of the fireBaseApp
+        drawCanvas = null, // The legoGrid
         currentKey = null, // The curent firebase draw key
         currentDraw = null, // The curent firebase draw
         readyForNewDraw = true;
 
 
     function initGame() {
-        legoCanvas = new DrawCanvas('canvasDraw', false);
+        drawCanvas = new DrawCanvas('canvasDraw', false);
         getNextDraw();
     }
 
 
     function pageLoad() {
 
-        fireBaseLego = new FireBaseLegoApp().app;
+        fireBaseApp = new FireBaseApp().app;
         // We init the authentication object
         let fireBaseAuth = new FireBaseAuth({
             idDivLogin: 'login-msg',
@@ -46,14 +46,14 @@ import {
         });
 
         // When a draw is add on the firebase object, we look at it
-        fireBaseLego.database().ref('draw').on('child_added', function (data) {
+        fireBaseApp.database().ref('draw').on('child_added', function (data) {
             if (readyForNewDraw) {
                 getNextDraw();
             }
         });
 
         // When a draw is removed (if an other moderator validate for example) on the firebase object, we look at it
-        fireBaseLego.database().ref('draw').on('child_removed', function (data) {
+        fireBaseApp.database().ref('draw').on('child_removed', function (data) {
             // We force a new draw because we always show the first draw
             getNextDraw();
         });
@@ -65,13 +65,13 @@ import {
 
                 We then allow the author to see its draw.
             */
-            let dataUrl = legoCanvas.snapshot();
+            let dataUrl = drawCanvas.snapshot();
             currentDraw.dataUrl = dataUrl;
             delete currentDraw.instructions;
             // we move the draw to the reject state
-            fireBaseLego.database().ref(`draw/${currentKey}`).remove();
-            fireBaseLego.database().ref(`/drawSaved/${currentDraw.userId}`).push(currentDraw);
-            legoCanvas.resetBoard();
+            fireBaseApp.database().ref(`draw/${currentKey}`).remove();
+            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}`).push(currentDraw);
+            drawCanvas.resetBoard();
             getNextDraw();
         });
 
@@ -81,19 +81,61 @@ import {
 
                 The count down page could be triggered to this change
              */
-            fireBaseLego.database().ref(`draw/${currentKey}`).remove();
-            fireBaseLego.database().ref("/drawValidated").push(currentDraw);
+            fireBaseApp.database().ref(`draw/${currentKey}`).remove();
+            fireBaseApp.database().ref("/drawValidated").push(currentDraw);
+            // We prepare the storage in database
+            const refDataStore = fireBaseApp.storage().ref().child(`/drawSaved/${currentDraw.userId}/${Date.now()}.jpg`);
             // We also save the state in the user tree
-            let dataUrl = legoCanvas.snapshot();
+            const dataUrl = drawCanvas.snapshot();
             currentDraw.dataUrl = dataUrl;
             currentDraw.accepted = true;
+            currentDraw.urlDataStore = refDataStore.fullPath;
             // We clean the draw before to save it
             delete currentDraw.instructions;
-            fireBaseLego.database().ref(`/drawSaved/${currentDraw.userId}`).push(currentDraw);
+            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}`).push(currentDraw);
             // And finaly we place it into validated draws in order to see the draw in the restitution scren
             delete currentDraw.userId;
-            fireBaseLego.database().ref("/drawShow").push(currentDraw);
-            legoCanvas.resetBoard();
+            fireBaseApp.database().ref("/drawShow").push(currentDraw);
+            const uploadTask = refDataStore.putString(dataUrl, 'data_url');
+            uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+                function (snapshot) {
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                        case firebase.storage.TaskState.PAUSED: // or 'paused'
+                            console.log('Upload is paused');
+                            break;
+                        case firebase.storage.TaskState.RUNNING: // or 'running'
+                            console.log('Upload is running');
+                            break;
+                    }
+                },
+                function (error) {
+
+                    // A full list of error codes is available at
+                    // https://firebase.google.com/docs/storage/web/handle-errors
+                    console.error(error.code);
+                    /*switch (error.code) {
+                      case 'storage/unauthorized':
+                        // User doesn't have permission to access the object
+                        break;
+
+                      case 'storage/canceled':
+                        // User canceled the upload
+                        break;
+
+
+                      case 'storage/unknown':
+                        // Unknown error occurred, inspect error.serverResponse
+                        break;
+                    }*/
+                },
+                function () {
+                    // Upload completed successfully, now we can get the download URL
+                    console.log('upload complete')
+                });
+            drawCanvas.resetBoard();
             getNextDraw();
         });
 
@@ -105,14 +147,14 @@ import {
     function getNextDraw() {
         // Each time, we take a snapshot of draw childs and show it to the moderator
         readyForNewDraw = false;
-        fireBaseLego.database().ref('draw').once('value', function (snapshot) {
+        fireBaseApp.database().ref('draw').once('value', function (snapshot) {
             if (snapshot && snapshot.val()) {
                 currentDraw = snapshot;
                 let snapshotFb = snapshot.val();
                 let keys = Object.keys(snapshotFb);
                 currentKey = keys[0];
                 currentDraw = snapshotFb[keys[0]];
-                legoCanvas.drawInstructions(currentDraw.instructions);
+                drawCanvas.drawInstructions(currentDraw.instructions);
                 document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
             } else {
                 readyForNewDraw = true;
