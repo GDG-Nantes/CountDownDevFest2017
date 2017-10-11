@@ -82,9 +82,13 @@ import {
                 The count down page could be triggered to this change
              */
             fireBaseApp.database().ref(`draw/${currentKey}`).remove();
-            fireBaseApp.database().ref("/drawValidated").push(currentDraw);
+            const updateDrawValidated = {};
+            const drawId = `${currentDraw.userId}-${Date.now()}`;
+            updateDrawValidated[`/drawValidated/${drawId}`] = currentDraw;
+            //fireBaseApp.database().ref("/drawValidated").push(currentDraw);
+            fireBaseApp.database().ref(`/drawValidated/${drawId}`).update(currentDraw);
             // We prepare the storage in database
-            const refDataStore = fireBaseApp.storage().ref().child(`/drawSaved/${currentDraw.userId}/${Date.now()}.jpg`);
+            const refDataStore = fireBaseApp.storage().ref().child(`/drawSaved/${currentDraw.userId}/${drawId}.jpg`);
             // We also save the state in the user tree
             const dataUrl = drawCanvas.snapshot();
             currentDraw.dataUrl = dataUrl;
@@ -92,10 +96,19 @@ import {
             currentDraw.urlDataStore = refDataStore.fullPath;
             // We clean the draw before to save it
             delete currentDraw.instructions;
-            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}`).push(currentDraw);
+            const updateDrawSaved = {};
+            updateDrawSaved[`/drawSaved/${currentDraw.userId}/${drawId}`] = currentDraw;
+            //fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}`).push(currentDraw);
+            updateDrawSaved[`/drawSaved/${currentDraw.userId}/${drawId}`] = currentDraw;
+            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${drawId}`).update(currentDraw);
             // And finaly we place it into validated draws in order to see the draw in the restitution scren
             delete currentDraw.userId;
-            fireBaseApp.database().ref("/drawShow").push(currentDraw);
+            const updateDrawShow = {};
+            updateDrawShow[`/drawShow/${drawId}`] = currentDraw;
+            //fireBaseApp.database().ref("/drawShow").push(currentDraw);
+            fireBaseApp.database().ref(`/drawShow/${drawId}`).update(currentDraw);
+
+            // Upload Image
             const uploadTask = refDataStore.putString(dataUrl, 'data_url');
             uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
                 function (snapshot) {
