@@ -13,14 +13,15 @@ import {
 
     let gameInit = false, // true if we init the legoGrid
         fireBaseApp = null, // the reference of the fireBaseApp
-        drawCanvas = null, // The legoGrid
+        drawToShow = null, // The legoGrid
+        clientRect = null,
         currentKey = null, // The curent firebase draw key
         currentDraw = null, // The curent firebase draw
         readyForNewDraw = true;
 
 
     function initGame() {
-        drawCanvas = new DrawCanvas('canvasDraw', false);
+        drawToShow = document.getElementById('drawToShow');
         getNextDraw();
     }
 
@@ -65,13 +66,11 @@ import {
 
                 We then allow the author to see its draw.
             */
-            let dataUrl = drawCanvas.snapshot();
-            currentDraw.dataUrl = dataUrl;
             delete currentDraw.instructions;
             // we move the draw to the reject state
             fireBaseApp.database().ref(`draw/${currentKey}`).remove();
-            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}`).push(currentDraw);
-            drawCanvas.resetBoard();
+            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).update(currentDraw);
+            drawToShow.style.background = '#FFFFFF';
             getNextDraw();
         });
 
@@ -82,73 +81,21 @@ import {
                 The count down page could be triggered to this change
              */
             fireBaseApp.database().ref(`draw/${currentKey}`).remove();
-            const updateDrawValidated = {};
-            const drawId = `${currentDraw.userId}-${Date.now()}`;
-            updateDrawValidated[`/drawValidated/${drawId}`] = currentDraw;
-            //fireBaseApp.database().ref("/drawValidated").push(currentDraw);
-            fireBaseApp.database().ref(`/drawValidated/${drawId}`).update(currentDraw);
-            // We prepare the storage in database
-            const refDataStore = fireBaseApp.storage().ref().child(`/drawSaved/${currentDraw.userId}/${drawId}.jpg`);
+            fireBaseApp.database().ref(`/drawValidated/${currentKey}`).update(currentDraw);
+
             // We also save the state in the user tree
-            const dataUrl = drawCanvas.snapshot();
-            currentDraw.dataUrl = dataUrl;
+            //const dataUrl = drawCanvas.snapshot();
+            //currentDraw.dataUrl = dataUrl;
             currentDraw.accepted = true;
-            currentDraw.urlDataStore = refDataStore.fullPath;
             // We clean the draw before to save it
             delete currentDraw.instructions;
-            const updateDrawSaved = {};
-            updateDrawSaved[`/drawSaved/${currentDraw.userId}/${drawId}`] = currentDraw;
-            //fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}`).push(currentDraw);
-            updateDrawSaved[`/drawSaved/${currentDraw.userId}/${drawId}`] = currentDraw;
-            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${drawId}`).update(currentDraw);
+            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).update(currentDraw);
             // And finaly we place it into validated draws in order to see the draw in the restitution scren
             delete currentDraw.userId;
             const updateDrawShow = {};
-            updateDrawShow[`/drawShow/${drawId}`] = currentDraw;
-            //fireBaseApp.database().ref("/drawShow").push(currentDraw);
-            fireBaseApp.database().ref(`/drawShow/${drawId}`).update(currentDraw);
+            fireBaseApp.database().ref(`/drawShow/${currentKey}`).update(currentDraw);
 
-            // Upload Image
-            const uploadTask = refDataStore.putString(dataUrl, 'data_url');
-            uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-                function (snapshot) {
-                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload is ' + progress + '% done');
-                    switch (snapshot.state) {
-                        case firebase.storage.TaskState.PAUSED: // or 'paused'
-                            console.log('Upload is paused');
-                            break;
-                        case firebase.storage.TaskState.RUNNING: // or 'running'
-                            console.log('Upload is running');
-                            break;
-                    }
-                },
-                function (error) {
-
-                    // A full list of error codes is available at
-                    // https://firebase.google.com/docs/storage/web/handle-errors
-                    console.error(error.code);
-                    /*switch (error.code) {
-                      case 'storage/unauthorized':
-                        // User doesn't have permission to access the object
-                        break;
-
-                      case 'storage/canceled':
-                        // User canceled the upload
-                        break;
-
-
-                      case 'storage/unknown':
-                        // Unknown error occurred, inspect error.serverResponse
-                        break;
-                    }*/
-                },
-                function () {
-                    // Upload completed successfully, now we can get the download URL
-                    console.log('upload complete')
-                });
-            drawCanvas.resetBoard();
+            drawToShow.style.background = '#FFFFFF';
             getNextDraw();
         });
 
@@ -167,8 +114,15 @@ import {
                 let keys = Object.keys(snapshotFb);
                 currentKey = keys[0];
                 currentDraw = snapshotFb[keys[0]];
-                drawCanvas.drawInstructions(currentDraw.instructions);
-                document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
+                const drawRef = fireBaseApp.storage().ref(currentDraw.urlDataStore);
+                drawRef.getDownloadURL().then(url => {
+                    if (!clientRect) {
+                        clientRect = drawToShow.getBoundingClientRect();
+                    }
+                    drawToShow.style.background = `url(${url})`;
+                    drawToShow.style['background-size'] = 'contain';
+                    document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
+                });
             } else {
                 readyForNewDraw = true;
                 document.getElementById('proposition-text').innerHTML = "En attente de proposition";

@@ -19,7 +19,8 @@ import {
 
     let gameInit = false, // true if we init the legoGrid
         fireBaseApp = null, // the reference of the fireBaseApp
-        legoCanvas = null, // The legoGrid
+        drawToShow = null, // The legoGrid
+        clientRect = null,
         currentKey = null, // The curent firebase draw key
         currentDraw = null, // The curent firebase draw
         minutesElt = null, // Html element for minutes
@@ -33,7 +34,7 @@ import {
 
     function initGame() {
 
-        legoCanvas = new DrawCanvas('canvasDraw', false);
+        drawToShow = document.getElementById('drawToShow');
 
         getNextDraw();
 
@@ -44,7 +45,7 @@ import {
      */
     function generateSnapshot(user, dataUrl) {
         // We start our flash effect
-        let rectCanvas = document.querySelector('.canvas-container').getBoundingClientRect();
+        let rectCanvas = document.querySelector('#drawToShow').getBoundingClientRect();
         let flashDiv = document.getElementById('flash-effect')
         flashDiv.style.top = (rectCanvas.top - 250) + "px";
         flashDiv.style.left = (rectCanvas.left - 250) + "px";
@@ -89,7 +90,7 @@ import {
             }, 100);
 
             // When the element is create, we clean the board
-            legoCanvas.resetBoard();
+            drawToShow.style.background = '#FFFFFF';
             document.getElementById('proposition-text').innerHTML = "En attente de proposition";
 
         }, 500);
@@ -182,16 +183,23 @@ import {
                 let keys = Object.keys(snapshotFb);
                 currentKey = keys[0];
                 currentDraw = snapshotFb[keys[0]];
-                legoCanvas.drawInstructions(currentDraw.instructions);
 
-                document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
-                setTimeout(() => {
-                    // After we update the draw
-                    let dataUrl = legoCanvas.snapshot();
-                    fireBaseApp.database().ref(`drawValidated/${currentKey}`).remove();
-                    // We finaly generate the image
-                    generateSnapshot(currentDraw.user, legoCanvas.snapshot())
-                }, 2000);
+                const drawRef = fireBaseApp.storage().ref(currentDraw.urlDataStore);
+                drawRef.getDownloadURL().then(url => {
+                    if (!clientRect) {
+                        clientRect = drawToShow.getBoundingClientRect();
+                    }
+                    drawToShow.style.background = `url(${url})`;
+                    drawToShow.style['background-size'] = 'contain';
+                    document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
+                    setTimeout(() => {
+                        // After we update the draw
+                        fireBaseApp.database().ref(`drawValidated/${currentKey}`).remove();
+                        // We finaly generate the image
+                        generateSnapshot(currentDraw.user, url)
+                    }, 2000);
+                });
+
             } else {
                 readyForNewDraw = true;
                 document.getElementById('proposition-text').innerHTML = "En attente de proposition";

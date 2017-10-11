@@ -97,9 +97,62 @@ import {
          */
 
         document.getElementById('btnSubmission').addEventListener('click', () => {
-            // When we submit a draw, we save it on firebase tree
-            fireBaseApp.database().ref("/draw").push(drawCanvas.export(fireBaseAuth.displayName(), fireBaseAuth.userId()));
-            drawCanvas.resetBoard();
+
+            // We first upload the image :
+            const currentDraw = drawCanvas.export(fireBaseAuth.displayName(), fireBaseAuth.userId());
+            const drawId = `${currentDraw.userId}-${Date.now()}`;
+            // We prepare the storage in database
+            const refDataStore = fireBaseApp.storage().ref().child(`/drawSaved/${currentDraw.userId}/${drawId}.jpg`);
+            currentDraw.urlDataStore = refDataStore.fullPath;
+            const base64DataUrl = drawCanvas.snapshot();
+
+            // Upload Image
+            const uploadTask = refDataStore.putString(base64DataUrl, 'data_url');
+            uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+                function (snapshot) {
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                        case firebase.storage.TaskState.PAUSED: // or 'paused'
+                            console.log('Upload is paused');
+                            break;
+                        case firebase.storage.TaskState.RUNNING: // or 'running'
+                            console.log('Upload is running');
+                            break;
+                    }
+                },
+                function (error) {
+
+                    // A full list of error codes is available at
+                    // https://firebase.google.com/docs/storage/web/handle-errors
+                    console.error(error.code);
+                    /*switch (error.code) {
+                      case 'storage/unauthorized':
+                        // User doesn't have permission to access the object
+                        break;
+
+                      case 'storage/canceled':
+                        // User canceled the upload
+                        break;
+
+
+                      case 'storage/unknown':
+                        // Unknown error occurred, inspect error.serverResponse
+                        break;
+                    }*/
+                    // When we submit a draw, we save it on firebase tree
+                    fireBaseApp.database().ref("/draw").push(currentDraw);
+                    drawCanvas.resetBoard();
+                },
+                function () {
+                    // Upload completed successfully, now we can get the download URL
+                    console.log('upload complete')
+                    // When we submit a draw, we save it on firebase tree
+                    fireBaseApp.database().ref("/draw").push(currentDraw);
+                    drawCanvas.resetBoard();
+                });
+
         });
 
         /**

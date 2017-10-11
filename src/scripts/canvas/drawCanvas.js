@@ -110,6 +110,16 @@ export class DrawCanvas {
         this.canvas.renderOnAddRemove = true;
     }
 
+    drawImage(urlImage) {
+        this.resetBoard();
+        this.canvas.setBackgroundImage(urlImage, this.canvas.renderAll.bind(this.canvas), {
+            originX: 'left',
+            originY: 'top',
+            width: this.canvas.width,
+            height: this.canvas.height,
+        });
+    }
+
     /**
      * Clean the board and the state of the canvas
      */
