@@ -32,5 +32,8 @@
     "gulp-util": "^3.0.7",
     "run-sequence": "^2.2.0",
     "vinyl-source-stream": "^1.0.0"
+  },
+  "dependencies": {
+    "firebase-functions": "^0.7.1"
   }
 }
