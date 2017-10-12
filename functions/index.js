@@ -4,18 +4,34 @@ const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+const prediction = require('./prediction');
 
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+//admin.initializeApp(functions.config().firebase);
+
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
 exports.helloWorld = functions.https.onRequest((request, response) => {
-    response.send("Hello from Firebase!");
-});
 
+    admin.database().ref(`/config`).once('value', (snapshot) => {
+        if (snapshot && snapshot.val()) {
+            let snapshotFb = snapshot.val();
+            let keys = Object.keys(snapshotFb);
+            keys.forEach((key) => {
+                response.send(JSON.stringify(snapshotFb[key]));
+            });
+        }
+    });
+
+});
+/**
+ * Method trigger when an image is upload
+ */
 exports.detectImage = functions.storage.object().onChange(event => {
+
+
     // [END generateThumbnailTrigger]
     // [START eventAttributes]
     const object = event.data; // The Storage object.
@@ -55,6 +71,21 @@ exports.detectImage = functions.storage.object().onChange(event => {
         return;
     }
     // [END stopConditions]
+    try {
+        console.log('Enter in DetectImage');
+        return prediction.predictPromise(event)
+            .then((result) => {
+                console.log('Prediction results from main page: ' + JSON.stringify(result, null, '\t'));
+            })
+            .catch((err) => {
+                console.log('Error trapped !');
+                console.error(err);
+            });;
+    } catch (e) {
+        console.log('Error trapped by catch !');
+        console.error(e);
+    }
+    return;
 
     // [START thumbnailGeneration]
     // Download file from bucket.
@@ -98,3 +129,12 @@ exports.detectImage = functions.storage.object().onChange(event => {
     });
     // [END thumbnailGeneration]
 });
+
+
+function setServiceAccount() {
+    const serviceAccountPath = __dirname + '/service-account.json';
+    process.env['GOOGLE_APPLICATION_CREDENTIALS'] = serviceAccountPath;
+}
+
+// Set env variables for what service account to use.
+setServiceAccount();

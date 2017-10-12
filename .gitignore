@@ -73,3 +73,5 @@ bundle*
 yarn.lock
 package-lock.json
 
+
+functions/service-account\.json
