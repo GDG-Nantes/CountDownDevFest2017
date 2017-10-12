@@ -6,12 +6,18 @@ html {
         text-transform: uppercase;
     }
     main,
-    .mdl-layout__drawer {
+    .mdl-layout__drawer,
+    .page-content {
         font-family: "Stanberry";
         button.mdl-button {
             font-family: "Crazy";
         }
         #firebaseui-auth-container button.mdl-button {
+            font-family: "Stanberry";
+        }
+        h2,
+        h3,
+        h4 {
             font-family: "Stanberry";
         }
     }

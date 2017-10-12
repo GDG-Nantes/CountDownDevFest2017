@@ -42,13 +42,18 @@
                 <div class="mdl-layout-spacer"></div>
 
                 <nav class="mdl-navigation">
-                    <a id="help" class="mdl-navigation__link" href="" hidden><i class="material-icons">help</i></a>
-                    <a id="signout" class="mdl-navigation__link" href="" hidden><i class="material-icons">highlight_off</i></a>
+                    <a id="help" class="mdl-navigation__link" href="" hidden>
+                        <i class="material-icons">help</i>
+                    </a>
+                    <a id="signout" class="mdl-navigation__link" href="" hidden>
+                        <i class="material-icons">highlight_off</i>
+                    </a>
                 </nav>
             </div>
         </header>
         <div class="mdl-layout__drawer">
-            <img src="./assets/img/icon_128.png" id="img-user" hiddden><span id="name-user" class="mdl-layout-title">Non Connecté</span>
+            <img src="./assets/img/icon_128.png" id="img-user" hiddden>
+            <span id="name-user" class="mdl-layout-title">Non Connecté</span>
             <nav class="mdl-navigation">
                 <a class="mdl-navigation__link" id="menu-game" href="#" hidden>Jeu</a>
                 <a class="mdl-navigation__link" id="menu-creations" href="#">Mes créations</a>
@@ -77,29 +82,30 @@
                     </div>
                     <div class="mdl-card__actions mdl-card--border">
                         <button id="startBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                            Demarrer <i class="material-icons">brush</i>
+                            Demarrer
+                            <i class="material-icons">brush</i>
                         </button>
                     </div>
                 </div>
                 <div id="game" hidden>
                     <header>
                         <button id="color-picker2" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
-                                <i class="material-icons">color_lens</i>
-                            </button>
+                            <i class="material-icons">color_lens</i>
+                        </button>
                         <button id="menuBrush" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
-                                <i class="material-icons">brush</i>
-                            </button>
+                            <i class="material-icons">brush</i>
+                        </button>
                         <button id="menuEraser" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
                             <i class="material-icons">healing</i>
-                            </button>
-                        <input id="slider-width" class="mdl-slider mdl-js-slider" type="range" min="1" max="60" value="30" step="10" tabindex="0">
+                        </button>
+                        <input id="slider-width" class="mdl-slider mdl-js-slider" type="range" min="1" max="60" value="10" step="10" tabindex="0">
                         <button id="menuClear" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
-                                    <i class="material-icons">delete</i>
-                                    </button>
+                            <i class="material-icons">delete</i>
+                        </button>
                     </header>
                     <canvas id="canvasDraw"></canvas>
                     <button id="btnSubmission" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                    Soumettre
+                        Soumettre
                     </button>
                 </div>
                 <div id="loading" hidden>
@@ -107,10 +113,16 @@
                 </div>
             </div>
             <div id="submitted" hidden>
-                <div class="parent-img"> <img id="imgSubmission"></div>
+                <div class="parent-img">
+                    <img id="imgSubmission">
+                </div>
                 <div class="parent-btns">
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnLeft"> <i class="material-icons">keyboard_arrow_left</i></button>
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnRight"> <i class="material-icons">keyboard_arrow_right</i></button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnLeft">
+                        <i class="material-icons">keyboard_arrow_left</i>
+                    </button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnRight">
+                        <i class="material-icons">keyboard_arrow_right</i>
+                    </button>
                 </div>
             </div>
         </main>

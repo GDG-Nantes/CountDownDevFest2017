@@ -51,7 +51,7 @@ export class DrawCanvas {
         if (drawingMode) {
             this.canvas.freeDrawingBrush = new fabric['PencilBrush'](this.canvas);
             this.canvas.freeDrawingBrush.color = BASE_COLOR;
-            this.canvas.freeDrawingBrush.width = 30;
+            this.canvas.freeDrawingBrush.width = 10;
         }
 
         // We create the canvas

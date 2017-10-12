@@ -34,8 +34,8 @@ import {
 
     function addElement(draw, domParent) {
 
-        let imgParent = document.createElement('div');
-        let img = document.createElement('img');
+        const imgParent = document.createElement('div');
+        const img = document.createElement('img');
         img.src = draw.dataUrl;
         img.classList.add('img-ori');
         imgParent.classList.add('img-ori-parent');
