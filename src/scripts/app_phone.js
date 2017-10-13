@@ -272,12 +272,18 @@ import {
         let draw = snapshotFb[keys[index]];
         let imgSubmission = document.getElementById('imgSubmission');
         let parentImg = imgSubmission.parentElement;
-        imgSubmission.src = draw.dataUrl;
-        if (draw.accepted && !parentImg.classList.contains('accepted')) {
-            parentImg.classList.add('accepted');
-        } else if (!draw.accepted) {
-            parentImg.classList.remove('accepted');
-        }
+
+        const drawRef = fireBaseApp.storage().ref(draw.urlDataStore);
+        drawRef.getDownloadURL().then(url => {
+            imgSubmission.src = url;
+            if (draw.accepted && !parentImg.classList.contains('accepted')) {
+                parentImg.classList.add('accepted');
+            } else if (!draw.accepted) {
+                parentImg.classList.remove('accepted');
+            }
+        });
+
+
 
     }
 

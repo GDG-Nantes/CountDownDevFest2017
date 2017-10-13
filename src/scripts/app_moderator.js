@@ -66,6 +66,7 @@ import {
 
                 We then allow the author to see its draw.
             */
+            currentDraw.accepted = false;
             delete currentDraw.instructions;
             // we move the draw to the reject state
             fireBaseApp.database().ref(`draw/${currentKey}`).remove();
@@ -75,6 +76,13 @@ import {
         });
 
         document.getElementById('btnSubmissionAccepted').addEventListener('click', () => {
+            // We save the state in the user tree
+            //const dataUrl = drawCanvas.snapshot();
+            //currentDraw.dataUrl = dataUrl;
+            currentDraw.accepted = true;
+            // We clean the draw before to save it
+            delete currentDraw.instructions;
+
             /*
                 When we accept a draw we move it to an other branch of the firebase tree.
 
@@ -82,17 +90,9 @@ import {
              */
             fireBaseApp.database().ref(`draw/${currentKey}`).remove();
             fireBaseApp.database().ref(`/drawValidated/${currentKey}`).update(currentDraw);
-
-            // We also save the state in the user tree
-            //const dataUrl = drawCanvas.snapshot();
-            //currentDraw.dataUrl = dataUrl;
-            currentDraw.accepted = true;
-            // We clean the draw before to save it
-            delete currentDraw.instructions;
             fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).update(currentDraw);
             // And finaly we place it into validated draws in order to see the draw in the restitution scren
             delete currentDraw.userId;
-            const updateDrawShow = {};
             fireBaseApp.database().ref(`/drawShow/${currentKey}`).update(currentDraw);
 
             drawToShow.style.background = '#FFFFFF';
