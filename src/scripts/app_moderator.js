@@ -61,27 +61,24 @@ import {
 
         // We refused the current draw
         document.getElementById('btnSubmissionRefused').addEventListener('click', () => {
+            const cloneCurrentDraw = JSON.parse(JSON.stringify(currentDraw));
             /*
                 When we refuse an object, we take a snapshot of it to avoid the reconstruction of the canvas.
 
                 We then allow the author to see its draw.
             */
-            currentDraw.accepted = false;
-            delete currentDraw.instructions;
+            cloneCurrentDraw.accepted = false;
             // we move the draw to the reject state
             fireBaseApp.database().ref(`draw/${currentKey}`).remove();
-            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).update(currentDraw);
+            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).set(cloneCurrentDraw);
             drawToShow.style.background = '#FFFFFF';
             getNextDraw();
         });
 
         document.getElementById('btnSubmissionAccepted').addEventListener('click', () => {
+            const cloneCurrentDraw = JSON.parse(JSON.stringify(currentDraw));
             // We save the state in the user tree
-            //const dataUrl = drawCanvas.snapshot();
-            //currentDraw.dataUrl = dataUrl;
-            currentDraw.accepted = true;
-            // We clean the draw before to save it
-            delete currentDraw.instructions;
+            cloneCurrentDraw.accepted = true;
 
             /*
                 When we accept a draw we move it to an other branch of the firebase tree.
@@ -89,11 +86,11 @@ import {
                 The count down page could be triggered to this change
              */
             fireBaseApp.database().ref(`draw/${currentKey}`).remove();
-            fireBaseApp.database().ref(`/drawValidated/${currentKey}`).update(currentDraw);
-            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).update(currentDraw);
+            fireBaseApp.database().ref(`/drawValidated/${currentKey}`).set(cloneCurrentDraw);
+            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).set(cloneCurrentDraw);
             // And finaly we place it into validated draws in order to see the draw in the restitution scren
-            delete currentDraw.userId;
-            fireBaseApp.database().ref(`/drawShow/${currentKey}`).update(currentDraw);
+            delete cloneCurrentDraw.userId;
+            fireBaseApp.database().ref(`/drawShow/${currentKey}`).set(cloneCurrentDraw);
 
             drawToShow.style.background = '#FFFFFF';
             getNextDraw();
@@ -109,7 +106,6 @@ import {
         readyForNewDraw = false;
         fireBaseApp.database().ref('draw').once('value', function (snapshot) {
             if (snapshot && snapshot.val()) {
-                currentDraw = snapshot;
                 let snapshotFb = snapshot.val();
                 let keys = Object.keys(snapshotFb);
                 currentKey = keys[0];
