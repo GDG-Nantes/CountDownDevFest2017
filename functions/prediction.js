@@ -104,9 +104,7 @@ function cmlePredictPromise(pixelArray, callback) {
                 }
 
                 // http://google.github.io/google-api-nodejs-client/21.2.0/ml.html
-                var ml = google.ml({
-                    version: 'trial1'
-                });
+                var ml = google.ml('v1');
                 const params = {
                     auth: authClient,
                     name: config.modelName,
