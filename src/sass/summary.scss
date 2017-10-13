@@ -48,3 +48,15 @@ $size-photo: 200px;
     line-height: 20pt;
     font-family: "Stanberry";
 }
+
+.img-ori-parent::before {
+    content: attr(data-tags);
+    position: absolute;
+    width: 100%;
+    text-align: left;
+    top: 5pt;
+    left: 5pt;
+    font-size: 10pt;
+    line-height: 10pt;
+    font-family: "Stanberry";
+}

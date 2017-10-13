@@ -40,6 +40,9 @@ import {
         img.classList.add('img-ori');
         imgParent.classList.add('img-ori-parent');
         imgParent.setAttribute('data-author', draw.user);
+        if (draw.tags && draw.tags.length > 0) {
+            imgParent.setAttribute('data-tags', '#' + draw.tags.split("/").join(' #'));
+        }
         imgParent.appendChild(img);
         imgParent.classList.add('big');
         domParent.appendChild(imgParent);

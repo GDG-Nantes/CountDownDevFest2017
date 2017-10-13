@@ -43,7 +43,7 @@ import {
     /**
      * Generate a snapshot of the draw with a flash effect
      */
-    function generateSnapshot(user, dataUrl) {
+    function generateSnapshot(user, tags, dataUrl) {
         // We start our flash effect
         let rectCanvas = document.querySelector('#drawToShow').getBoundingClientRect();
         let flashDiv = document.getElementById('flash-effect')
@@ -61,6 +61,9 @@ import {
             img.classList.add('img-ori');
             imgParent.classList.add('img-ori-parent');
             imgParent.setAttribute('data-author', user);
+            if (tags && tags.length > 0) {
+                imgParent.setAttribute('data-tags', '#' + tags.split("/").join(' #'));
+            }
             imgParent.appendChild(img);
             imgParent.classList.add('big');
             // Initial Position
@@ -196,7 +199,7 @@ import {
                         // After we update the draw
                         fireBaseApp.database().ref(`drawValidated/${currentKey}`).remove();
                         // We finaly generate the image
-                        generateSnapshot(currentDraw.user, url)
+                        generateSnapshot(currentDraw.user, currentDraw.tags, url)
                     }, 2000);
                 });
 
