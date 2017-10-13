@@ -86,8 +86,10 @@ import {
                 The count down page could be triggered to this change
              */
             fireBaseApp.database().ref(`draw/${currentKey}`).remove();
-            fireBaseApp.database().ref(`/drawValidated/${currentKey}`).set(cloneCurrentDraw);
             fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).set(cloneCurrentDraw);
+            // After this moment, it is not necessary to save the state
+            delete cloneCurrentDraw.accepted;
+            fireBaseApp.database().ref(`/drawValidated/${currentKey}`).set(cloneCurrentDraw);
             // And finaly we place it into validated draws in order to see the draw in the restitution scren
             delete cloneCurrentDraw.userId;
             fireBaseApp.database().ref(`/drawShow/${currentKey}`).set(cloneCurrentDraw);

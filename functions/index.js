@@ -5,6 +5,7 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 const prediction = require('./prediction');
+const dictionnary = require('./dictionnary').dictionnary;
 
 const admin = require('firebase-admin');
 //admin.initializeApp(functions.config().firebase);
@@ -75,6 +76,19 @@ exports.detectImage = functions.storage.object().onChange(event => {
         console.log('Enter in DetectImage');
         return prediction.predictPromise(event)
             .then((result) => {
+                const userId = path.dirname(filePath).split(path.sep).pop();
+                const drawId = path.basename(filePath, '.jpg');
+                const updates = {};
+                admin.database().ref(`/drawUpload/${drawId}`).once('value', (snapshot) => {
+                    if (snapshot && snapshot.val()) {
+                        let snapshotFb = snapshot.val();
+                        snapshotFb.tags = extractTags(result);
+                        admin.database().ref(`/draw/${drawId}`).set(snapshotFb)
+                            .then(() => admin.database().ref(`/drawUpload/${drawId}`).remove())
+                            .then(() => console.log('finish manipulating image'))
+                            .catch((reason) => console.log(reason));
+                    }
+                });
                 console.log('Prediction results from main page: ' + JSON.stringify(result, null, '\t'));
             })
             .catch((err) => {
@@ -86,50 +100,28 @@ exports.detectImage = functions.storage.object().onChange(event => {
         console.error(e);
     }
     return;
-
-    // [START thumbnailGeneration]
-    // Download file from bucket.
-    const bucket = gcs.bucket(fileBucket);
-    const tempFilePath = path.join(os.tmpdir(), fileName);
-    return bucket.file(filePath).download({
-        destination: tempFilePath
-    }).then(() => {
-        console.log('Image downloaded locally to -> Convert to greyscale', tempFilePath);
-        // Generate a thumbnail using ImageMagick.
-        return spawn('convert', [tempFilePath, '-set', 'colorspace', 'RGB', '-colorspace', 'gray', tempFilePath]);
-    }).then(() => {
-        console.log('Thumbnail image', tempFilePath);
-        // Generate a thumbnail using ImageMagick.
-        return spawn('convert', [tempFilePath, '-thumbnail', '28x28>', tempFilePath]);
-    }).then(() => {
-        console.log('Thumbnail created at', tempFilePath);
-        // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
-        const thumbFileName = `thumb_${fileName}`;
-        const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
-        // Uploading the thumbnail.
-        return bucket.upload(tempFilePath, {
-            destination: thumbFilePath
-        });
-        // Once the thumbnail has been uploaded delete the local file to free up disk space.
-    }).then(() => {
-        fs.unlinkSync(tempFilePath);
-        const userId = path.dirname(filePath).split(path.sep).pop();
-        const drawId = path.basename(filePath, '.jpg');
-        const thumbFileName = `thumb_${fileName}`;
-        const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
-        const updates = {};
-        updates[`/drawSaved/${userId}/${drawId}`] = {
-            thumbNail: thumbFilePath
-        };
-        admin.database().ref(`/drawSaved/${userId}/${drawId}`).update({
-                thumbNail: thumbFilePath
-            })
-            .then(() => console.log('finish manipulating image'))
-            .catch((reason) => console.log(reason));
-    });
-    // [END thumbnailGeneration]
 });
 
+function extractTags(result) {
+    const tags = [];
+    if (!result.predictions) {
+        return tags;
+    }
+
+    try {
+
+        result.predictions.forEach(prediction => {
+            prediction.scores.forEach((score, index) => {
+                if (score > 0) {
+                    tags.push(dictionnary[+prediction.classes[index]]);
+                }
+            });
+        });
+    } catch (e) {
+        //TODO
+    }
+    return tags.join('/');
+}
 
 function setServiceAccount() {
     const serviceAccountPath = __dirname + '/service-account.json';

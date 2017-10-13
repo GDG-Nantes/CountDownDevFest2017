@@ -145,14 +145,14 @@ import {
                         break;
                     }*/
                     // When we submit a draw, we save it on firebase tree
-                    fireBaseApp.database().ref("/draw").push(currentDraw);
+                    fireBaseApp.database().ref(`/drawUpload/${drawId}`).set(currentDraw);
                     drawCanvas.resetBoard();
                 },
                 function () {
                     // Upload completed successfully, now we can get the download URL
                     console.log('upload complete')
                     // When we submit a draw, we save it on firebase tree
-                    fireBaseApp.database().ref("/draw").push(currentDraw);
+                    fireBaseApp.database().ref(`/drawUpload/${drawId}`).set(currentDraw);
                     drawCanvas.resetBoard();
                 });
 
