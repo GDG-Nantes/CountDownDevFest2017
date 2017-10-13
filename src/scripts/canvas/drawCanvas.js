@@ -87,28 +87,6 @@ export class DrawCanvas {
         this.canvas.renderAll();
     }
 
-    /**
-     * Serialize the canvas to a minimal object that could be treat after
-     */
-    export (userName, userId) {
-        return {
-            user: userName,
-            userId: userId,
-            instructions: JSON.stringify(this.canvas)
-        };
-    }
-
-    /**
-     * Draw from intructions a draw
-     */
-    drawInstructions(instructionObject) {
-        this.resetBoard();
-        this.canvas.renderOnAddRemove = false;
-
-        this.canvas.loadFromJSON(instructionObject);
-        this.canvas.renderAll();
-        this.canvas.renderOnAddRemove = true;
-    }
 
     drawImage(urlImage) {
         this.resetBoard();

@@ -99,7 +99,10 @@ import {
         document.getElementById('btnSubmission').addEventListener('click', () => {
 
             // We first upload the image :
-            const currentDraw = drawCanvas.export(fireBaseAuth.displayName(), fireBaseAuth.userId());
+            const currentDraw = {
+                user: fireBaseAuth.displayName(),
+                userId: fireBaseAuth.userId()
+            };
             const drawId = `${currentDraw.userId}-${Date.now()}`;
             // We prepare the storage in database
             const refDataStore = fireBaseApp.storage().ref().child(`/drawSaved/${currentDraw.userId}/${drawId}.jpg`);
