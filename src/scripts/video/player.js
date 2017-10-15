@@ -1,25 +1,25 @@
 'use strict'
 
 /**
- * Class for playing video 
- * 
+ * Class for playing video
+ *
  */
-export class VideoPlayer{
-    constructor(parentElt, callBackEnd){
+export class VideoPlayer {
+    constructor(parentElt, callBackEnd) {
         this.videoElt = document.createElement('video');
         parentElt.appendChild(this.videoElt);
-        this.videoName = 'intro-devfest-2016.mp4';        
+        this.videoName = 'MotionDevfest2017_HQ.mp4';
         this.callBackEnd = callBackEnd;
     }
 
     /**
      * Play the video
      */
-    playVideo(){
+    playVideo() {
         this.videoElt.pause();
         this.videoElt.src = `./assets/video/${this.videoName}`;
         this.videoElt.play();
         this.videoElt.onended = this.callBackEnd.bind(this);
     }
-   
+
 }

@@ -27,7 +27,7 @@ import {
         secondsElt = null, // Html element for seconds
         countDownParentElt = null, // Html element parent of minutes and seconds
         lastLeft = false, // True if the last photo was placed at the left of the countDown
-        targetDate = moment('2016-11-09, 09:00:00:000', "YYYY-MM-DD, HH:mm:ss:SSS"), // The timeout date
+        targetDate = moment('2017-10-19, 09:00:00:000', "YYYY-MM-DD, HH:mm:ss:SSS"), // The timeout date
         readyForNewDraw = true,
         audioPlayer = null,
         endShow = false;
@@ -129,9 +129,9 @@ import {
         countDownParentElt = document.getElementById('count-down-text');
 
         // To remove if you want to use the target date define at the top of the class
-        targetDate = moment(), // The timeout date
-            targetDate.add(30, 'minutes');
-        //targetDate.add(5, 'seconds');
+        //targetDate = moment(); // The timeout date
+        //targetDate.add(30, 'minutes');
+        //targetDate.add(10, 'seconds');
         // We start our text animation
         window.requestAnimationFrame(checkTime);
 
@@ -259,7 +259,12 @@ import {
         opacity.style.display = '';
         setTimeout(_ => {
             opacityElt.classList.add('black');
-            setTimeout(() => new VideoPlayer(opacityElt, () => console.log('end')).playVideo(), 4000);
+            setTimeout(() => new VideoPlayer(opacityElt, () => {
+                console.log('end');
+                setTimeout(() => {
+                    window.location = './assets/img/keynote.jpg';
+                }, 5000);
+            }).playVideo(), 4000);
         }, 100);
     }
 

@@ -1,6 +1,12 @@
 'use strict';
 
 export const PLAYLIST = [
+    "2017_01_Fleetwood_Mac_-_The_Chain.mp3",
+    "2017_02_Elton_John_-_Spirit_In_The_Sky.mp3",
+    "2017_03_AC-DC_-_Back_in_Black.mp3",
+    "2017_04_Heathens_-_twenty_one_pilots.mp3",
+    "2017_05_Hooked on a Feeling.mp3",
+    "2017_06_David_Bowie_-_Heroes.mp3",
     /*"01_Quantic_&_Nickodemus_Feat._Tempo_&_The_Candela_Allstars_-_Mi_Swing_Es_Tropical.mp3",
     "02_POLO_&_PAN_-_Canopée_(audio).mp3",
     "03_Capital_Cities_-_Vowels_Lyric_Video.mp3",
