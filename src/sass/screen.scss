@@ -24,9 +24,14 @@ canvas,
 }
 
 #count-down-text {
-    font-family: 'Crazy';
-    font-size: 50px;
-    height: 50px;
+    font-family: 'ComixLoud';
+    font-size: 40px;
+    height: 40px;
+}
+
+#proposition-text {
+    width: 700px;
+    text-align: center;
 }
 
 $size-photo: 200px;
@@ -49,6 +54,21 @@ $size-photo-big: $canvas-size;
     left: 0;
     font-size: 50pt;
     line-height: 50pt;
+    transition-property: all;
+    transition-duration: 2s;
+    transition-timing-fonction: ease;
+}
+
+.img-ori-parent.big::before {
+    content: attr(data-tags);
+    position: absolute;
+    width: 100%;
+    text-align: left;
+    top: 5pt;
+    left: 5pt;
+    font-size: 25pt;
+    line-height: 25pt;
+    font-family: "Stanberry";
     transition-property: all;
     transition-duration: 2s;
     transition-timing-fonction: ease;
@@ -93,6 +113,21 @@ $size-photo-big: $canvas-size;
     transition-property: all;
     transition-duration: 2s;
     transition-timing-fonction: linear;
+}
+
+.img-ori-parent::before {
+    content: attr(data-tags);
+    position: absolute;
+    width: 100%;
+    text-align: left;
+    top: 5pt;
+    left: 5pt;
+    font-size: 10pt;
+    line-height: 10pt;
+    font-family: "Stanberry";
+    transition-property: all;
+    transition-duration: 2s;
+    transition-timing-fonction: ease;
 }
 
 #flash-effect {

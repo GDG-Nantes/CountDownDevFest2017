@@ -194,7 +194,9 @@ import {
                     }
                     drawToShow.style.background = `url(${url})`;
                     drawToShow.style['background-size'] = 'contain';
-                    document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
+                    const tags = (currentDraw.tags && currentDraw.tags.length > 0) ?
+                        `,\n Classification détectée : ${currentDraw.tags.split("/").join(' #')}` : ''
+                    document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}${tags}`;
                     setTimeout(() => {
                         // After we update the draw
                         fireBaseApp.database().ref(`drawValidated/${currentKey}`).remove();
