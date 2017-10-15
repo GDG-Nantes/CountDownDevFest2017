@@ -104,6 +104,11 @@
                         </button>
                     </header>
                     <canvas id="canvasDraw"></canvas>
+                    <!-- MDL Progress Bar with Indeterminate Progress -->
+                    <div id="uploading" style="display:none">
+                        <div id="progressUpload" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+                        <h4>Uploading</h4>
+                    </div>
                     <button id="btnSubmission" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
                         Soumettre
                     </button>
@@ -124,6 +129,10 @@
                         <i class="material-icons">keyboard_arrow_right</i>
                     </button>
                 </div>
+            </div>
+            <div id="snackbar-container" class="mdl-js-snackbar mdl-snackbar">
+                <div class="mdl-snackbar__text"></div>
+                <button class="mdl-snackbar__action" type="button"></button>
             </div>
         </main>
     </div>

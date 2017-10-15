@@ -74,26 +74,17 @@ exports.detectImage = functions.storage.object().onChange(event => {
     // [END stopConditions]
     try {
         console.log('Enter in DetectImage');
+        const userId = path.dirname(filePath).split(path.sep).pop();
+        const drawId = path.basename(filePath, '.jpg');
+
         return prediction.predictPromise(event)
             .then((result) => {
-                const userId = path.dirname(filePath).split(path.sep).pop();
-                const drawId = path.basename(filePath, '.jpg');
-                const updates = {};
-                admin.database().ref(`/drawUpload/${drawId}`).once('value', (snapshot) => {
-                    if (snapshot && snapshot.val()) {
-                        let snapshotFb = snapshot.val();
-                        snapshotFb.tags = extractTags(result);
-                        admin.database().ref(`/draw/${drawId}`).set(snapshotFb)
-                            .then(() => admin.database().ref(`/drawUpload/${drawId}`).remove())
-                            .then(() => console.log('finish manipulating image'))
-                            .catch((reason) => console.log(reason));
-                    }
-                });
-                console.log('Prediction results from main page: ' + JSON.stringify(result, null, '\t'));
+                updateTree(userId, drawId, result);
             })
             .catch((err) => {
                 console.log('Error trapped !');
                 console.error(err);
+                updateTree(userId, drawId);
             });;
     } catch (e) {
         console.log('Error trapped by catch !');
@@ -102,14 +93,37 @@ exports.detectImage = functions.storage.object().onChange(event => {
     return;
 });
 
+function updateTree(userId, drawId, result) {
+    admin.database().ref(`/drawUpload/${drawId}`).once('value', (snapshot) => {
+        if (snapshot && snapshot.val()) {
+            let snapshotFb = snapshot.val();
+            snapshotFb.tags = extractTags(result);
+            admin.database().ref(`/draw/${drawId}`).set(snapshotFb)
+                .then(() => admin.database().ref(`/drawUpload/${drawId}`).remove())
+                .then(() => console.log('finish manipulating image'))
+                .catch((reason) => console.log(reason));
+        }
+    }, (error) => {
+        console.error(error);
+    });
+    if (result) {
+        console.log('Prediction results from main page: ' + JSON.stringify(result, null, '\t'));
+    } else {
+        console.error('No result ! ');
+    }
+}
+
 function extractTags(result) {
-    const tags = [];
+    if (result === undefined || result === null) {
+        return '';
+    }
+
     if (!result.predictions) {
-        return tags;
+        return '';
     }
 
     try {
-
+        const tags = [];
         result.predictions.forEach(prediction => {
             prediction.scores.forEach((score, index) => {
                 if (score > 0) {
@@ -117,10 +131,10 @@ function extractTags(result) {
                 }
             });
         });
+        return tags.join('/');
     } catch (e) {
-        //TODO
+        return '';
     }
-    return tags.join('/');
 }
 
 function setServiceAccount() {

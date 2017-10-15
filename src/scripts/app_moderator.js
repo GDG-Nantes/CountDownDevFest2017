@@ -46,21 +46,16 @@ import {
             }
         });
 
+
         // When a draw is add on the firebase object, we look at it
-        fireBaseApp.database().ref('draw').on('child_added', function (data) {
-            if (readyForNewDraw) {
-                getNextDraw();
-            }
-        });
+        fireBaseApp.database().ref('draw').on('child_added', getNextDraw);
 
         // When a draw is removed (if an other moderator validate for example) on the firebase object, we look at it
-        fireBaseApp.database().ref('draw').on('child_removed', function (data) {
-            // We force a new draw because we always show the first draw
-            getNextDraw();
-        });
+        fireBaseApp.database().ref('draw').on('child_removed', getNextDraw);
 
         // We refused the current draw
         document.getElementById('btnSubmissionRefused').addEventListener('click', () => {
+            document.getElementById('proposition-text').innerHTML = "En attente de proposition";
             const cloneCurrentDraw = JSON.parse(JSON.stringify(currentDraw));
             /*
                 When we refuse an object, we take a snapshot of it to avoid the reconstruction of the canvas.
@@ -69,13 +64,23 @@ import {
             */
             cloneCurrentDraw.accepted = false;
             // we move the draw to the reject state
-            fireBaseApp.database().ref(`draw/${currentKey}`).remove();
-            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).set(cloneCurrentDraw);
+            fireBaseApp.database().ref(`draw/${currentKey}`).remove()
+                .catch(err => {
+                    localStorage['Err' + currentKey] = true;
+                    console.error(err);
+                });
+            fireBaseApp.database().ref(`/drawSaved/${currentDraw.userId}/${currentKey}`).set(cloneCurrentDraw)
+                .catch(err => {
+                    localStorage['Err' + currentKey] = true;
+                    console.error(err);
+                });
             drawToShow.style.background = '#FFFFFF';
+            readyForNewDraw = true;
             getNextDraw();
         });
 
         document.getElementById('btnSubmissionAccepted').addEventListener('click', () => {
+            document.getElementById('proposition-text').innerHTML = "En attente de proposition";
             const cloneCurrentDraw = JSON.parse(JSON.stringify(currentDraw));
             // We save the state in the user tree
             cloneCurrentDraw.accepted = true;
@@ -95,6 +100,7 @@ import {
             fireBaseApp.database().ref(`/drawShow/${currentKey}`).set(cloneCurrentDraw);
 
             drawToShow.style.background = '#FFFFFF';
+            readyForNewDraw = true;
             getNextDraw();
         });
 
@@ -104,23 +110,37 @@ import {
      * Calculate the next draw to show
      */
     function getNextDraw() {
+        if (!readyForNewDraw) {
+            return;
+        }
         // Each time, we take a snapshot of draw childs and show it to the moderator
         readyForNewDraw = false;
         fireBaseApp.database().ref('draw').once('value', function (snapshot) {
             if (snapshot && snapshot.val()) {
                 let snapshotFb = snapshot.val();
                 let keys = Object.keys(snapshotFb);
-                currentKey = keys[0];
-                currentDraw = snapshotFb[keys[0]];
+                const index = getIndex(keys);
+                if (index === -1) {
+                    readyForNewDraw = true;
+                    return;
+                }
+                currentKey = keys[index];
+                currentDraw = snapshotFb[currentKey];
                 const drawRef = fireBaseApp.storage().ref(currentDraw.urlDataStore);
                 drawRef.getDownloadURL().then(url => {
-                    if (!clientRect) {
-                        clientRect = drawToShow.getBoundingClientRect();
-                    }
-                    drawToShow.style.background = `url(${url})`;
-                    drawToShow.style['background-size'] = 'contain';
-                    document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
-                });
+                        if (!clientRect) {
+                            clientRect = drawToShow.getBoundingClientRect();
+                        }
+                        drawToShow.style.background = `url(${url})`;
+                        drawToShow.style['background-size'] = 'contain';
+                        document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
+                    })
+                    .catch(err => {
+                        localStorage['Err' + currentKey] = true;
+                        console.error(err);
+                        readyForNewDraw = true;
+                        getNextDraw();
+                    });
             } else {
                 readyForNewDraw = true;
                 document.getElementById('proposition-text').innerHTML = "En attente de proposition";
@@ -130,6 +150,24 @@ import {
             console.error(err);
             // error callback triggered with PERMISSION_DENIED
         });
+    }
+
+    /**Return a valid index according to ignored keys */
+    function getIndex(keys) {
+        let index = 0;
+        let currentKeyTmp = keys[index];
+        let couldReturnIndex = !localStorage['Err' + currentKeyTmp];
+        while (!couldReturnIndex) {
+            if (index >= keys.length) {
+                couldReturnIndex = true;
+                index = -1;
+            } else {
+                index++;
+                currentKeyTmp = keys[index];
+                couldReturnIndex = localStorage['Err' + currentKeyTmp];
+            }
+        }
+        return index;
     }
 
 

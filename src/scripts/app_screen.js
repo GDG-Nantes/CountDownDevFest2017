@@ -89,6 +89,7 @@ import {
                 lastLeft = !lastLeft; // True if the last photo was placed at the left of the countDown
                 let angle = angleChoice === 1 ? -9 : angleChoice === 2 ? 14 : 0; // The timeout date
                 imgParent.style.transform = `rotate(${angle}deg)`;
+                readyForNewDraw = true;
                 getNextDraw();
             }, 100);
 
@@ -121,11 +122,7 @@ import {
             }
         });
 
-        fireBaseApp.database().ref('drawValidated').on('child_added', function (data) {
-            if (readyForNewDraw) {
-                getNextDraw();
-            }
-        });
+        fireBaseApp.database().ref('drawValidated').on('child_added', getNextDraw);
 
         minutesElt = document.getElementById('minutes');
         secondsElt = document.getElementById('seconds');
@@ -138,6 +135,24 @@ import {
         // We start our text animation
         window.requestAnimationFrame(checkTime);
 
+    }
+
+    /**Return a valid index according to ignored keys */
+    function getIndex(keys) {
+        let index = 0;
+        let currentKeyTmp = keys[index];
+        let couldReturnIndex = !localStorage['Err' + currentKeyTmp];
+        while (!couldReturnIndex) {
+            if (index >= keys.length) {
+                couldReturnIndex = true;
+                index = -1;
+            } else {
+                index++;
+                currentKeyTmp = keys[index];
+                couldReturnIndex = localStorage['Err' + currentKeyTmp];
+            }
+        }
+        return index;
     }
 
     /**
@@ -174,43 +189,65 @@ import {
      * Show the next draw
      */
     function getNextDraw() {
-        if (endShow) {
+        if (endShow || !readyForNewDraw) {
             return;
         }
         readyForNewDraw = false;
-        fireBaseApp.database().ref('drawValidated').once('value', function (snapshot) {
+        fireBaseApp.database().ref('drawValidated').once('value', (snapshot) => {
             if (snapshot && snapshot.val()) {
                 // First we get the draw
-                currentDraw = snapshot;
                 let snapshotFb = snapshot.val();
                 let keys = Object.keys(snapshotFb);
-                currentKey = keys[0];
-                currentDraw = snapshotFb[keys[0]];
+                const index = getIndex(keys);
+                if (index === -1) {
+                    readyForNewDraw = true;
+                    return;
+                }
+                currentKey = keys[index];
+                currentDraw = snapshotFb[currentKey];
 
                 const drawRef = fireBaseApp.storage().ref(currentDraw.urlDataStore);
                 drawRef.getDownloadURL().then(url => {
-                    if (!clientRect) {
-                        clientRect = drawToShow.getBoundingClientRect();
-                    }
-                    drawToShow.style.background = `url(${url})`;
-                    drawToShow.style['background-size'] = 'contain';
-                    const tags = (currentDraw.tags && currentDraw.tags.length > 0) ?
-                        `,\n Classification détectée : ${currentDraw.tags.split("/").join(' #')}` : ''
-                    document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}${tags}`;
-                    setTimeout(() => {
-                        // After we update the draw
-                        fireBaseApp.database().ref(`drawValidated/${currentKey}`).remove();
-                        // We finaly generate the image
-                        generateSnapshot(currentDraw.user, currentDraw.tags, url)
-                    }, 2000);
-                });
+                        try {
+
+                            if (!clientRect) {
+                                clientRect = drawToShow.getBoundingClientRect();
+                            }
+                            drawToShow.style.background = `url(${url})`;
+                            drawToShow.style['background-size'] = 'contain';
+                            const tags = (currentDraw.tags && currentDraw.tags.length > 0) ?
+                                `,\n Classification détectée : ${currentDraw.tags.split("/").join(' #')}` : ''
+                            document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}${tags}`;
+                            setTimeout(() => {
+                                // After we update the draw
+                                fireBaseApp.database().ref(`drawValidated/${currentKey}`).remove()
+                                    .catch(err => {
+                                        localStorage['Err' + currentKey] = true;
+                                        console.error(err);
+                                    });
+                                // We finaly generate the image
+                                generateSnapshot(currentDraw.user, currentDraw.tags, url)
+                            }, 2000);
+                        } catch (err) {
+                            localStorage['Err' + currentKey] = true;
+                            console.error(err);
+                            readyForNewDraw = true;
+                            getNextDraw();
+                        }
+                    })
+                    .catch(err => {
+                        localStorage['Err' + currentKey] = true;
+                        console.error(err);
+                        readyForNewDraw = true;
+                        getNextDraw();
+                    });
 
             } else {
                 readyForNewDraw = true;
                 document.getElementById('proposition-text').innerHTML = "En attente de proposition";
             }
 
-        }, function (err) {
+        }, (err) => {
             console.error(err);
             // error callback triggered with PERMISSION_DENIED
         });

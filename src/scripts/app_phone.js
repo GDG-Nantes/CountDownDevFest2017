@@ -57,7 +57,7 @@ import {
          * Management of Cinematic Buttons
          */
         const startBtn = document.getElementById('startBtn');
-        const helpBtn = document.getElementById('help')
+        const helpBtn = document.getElementById('help');
 
         const streamStart = Rx.Observable
             .fromEvent(startBtn, 'click')
@@ -95,9 +95,9 @@ import {
         /**
          * Management of submission
          */
-
         document.getElementById('btnSubmission').addEventListener('click', () => {
 
+            document.getElementById('uploading').style.display = '';
             // We first upload the image :
             const currentDraw = {
                 user: fireBaseAuth.displayName(),
@@ -112,7 +112,7 @@ import {
             // Upload Image
             const uploadTask = refDataStore.putString(base64DataUrl, 'data_url');
             uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-                function (snapshot) {
+                (snapshot) => {
                     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                     var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     console.log('Upload is ' + progress + '% done');
@@ -125,7 +125,7 @@ import {
                             break;
                     }
                 },
-                function (error) {
+                (error) => {
 
                     // A full list of error codes is available at
                     // https://firebase.google.com/docs/storage/web/handle-errors
@@ -144,16 +144,22 @@ import {
                         // Unknown error occurred, inspect error.serverResponse
                         break;
                     }*/
-                    // When we submit a draw, we save it on firebase tree
-                    fireBaseApp.database().ref(`/drawUpload/${drawId}`).set(currentDraw);
                     drawCanvas.resetBoard();
+                    document.getElementById('uploading').style.display = 'none';
+                    document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
+                        message: 'Dessin non soumis, il y a eu un problème.'
+                    });
                 },
-                function () {
+                () => {
                     // Upload completed successfully, now we can get the download URL
                     console.log('upload complete')
                     // When we submit a draw, we save it on firebase tree
                     fireBaseApp.database().ref(`/drawUpload/${drawId}`).set(currentDraw);
                     drawCanvas.resetBoard();
+                    document.getElementById('uploading').style.display = 'none';
+                    document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
+                        message: 'Dessin soumis ! Merci !'
+                    });
                 });
 
         });
@@ -196,22 +202,12 @@ import {
             .merge(streamClear)
             .subscribe((state) => {
                 if (state === 'game') {
-                    document.querySelector('.page-content').removeAttribute('hidden');
-                    document.getElementById('submitted').setAttribute('hidden', '');
-                    document.getElementById('menu-game').setAttribute('hidden', '');
-                    document.getElementById('menu-creations').removeAttribute('hidden');
-                    document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
-                    document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+                    manageStateDivs(state);
 
                 } else if (state === 'creations') {
-                    document.querySelector('.page-content').setAttribute('hidden', '');
-                    document.getElementById('submitted').removeAttribute('hidden');
-                    document.getElementById('menu-game').removeAttribute('hidden');
-                    document.getElementById('menu-creations').setAttribute('hidden', '');
-                    document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
-                    document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+                    manageStateDivs(state);
 
-                    fireBaseApp.database().ref(`drawSaved/${fireBaseAuth.userId()}`).once('value', function (snapshot) {
+                    fireBaseApp.database().ref(`drawSaved/${fireBaseAuth.userId()}`).once('value', (snapshot) => {
                         if (snapshot && snapshot.val()) {
                             console.log(snapshot.val());
                             snapshotFb = snapshot.val();
@@ -220,9 +216,16 @@ import {
                             draw();
                         } else {
                             console.log('no draw !');
+                            document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
+                                message: 'Vous n\'avez pas encore soumis de dessin.'
+                            });
                         }
 
-                    }, function (err) {
+                    }, (err) => {
+                        document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
+                            message: 'Une erreur c\'est produite pendant la récupération des dessins'
+                        });
+                        manageStateDivs('game');
                         console.error(err);
                         // error callback triggered with PERMISSION_DENIED
                     });
@@ -268,6 +271,28 @@ import {
 
     }
 
+    function manageStateDivs(state) {
+        switch (state) {
+            case 'game':
+                document.querySelector('.page-content').removeAttribute('hidden');
+                document.getElementById('submitted').setAttribute('hidden', '');
+                document.getElementById('menu-game').setAttribute('hidden', '');
+                document.getElementById('menu-creations').removeAttribute('hidden');
+                document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
+                document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+                break;
+            case 'creations':
+                document.querySelector('.page-content').setAttribute('hidden', '');
+                document.getElementById('submitted').removeAttribute('hidden');
+                document.getElementById('menu-game').removeAttribute('hidden');
+                document.getElementById('menu-creations').setAttribute('hidden', '');
+                document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
+                document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+                break;
+
+        }
+    }
+
     /**
      * Show a draw and show it's state : Rejected or Accepted
      */
@@ -276,15 +301,34 @@ import {
         let imgSubmission = document.getElementById('imgSubmission');
         let parentImg = imgSubmission.parentElement;
 
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+
+        if (index === 0) {
+            btnLeft.disabled = true;
+        } else {
+            btnLeft.removeAttribute('disabled');
+        }
+
+        if (index === keys.length - 1) {
+            btnRight.disabled = true;
+        } else {
+            btnRight.removeAttribute('disabled');
+        }
+
         const drawRef = fireBaseApp.storage().ref(draw.urlDataStore);
         drawRef.getDownloadURL().then(url => {
-            imgSubmission.src = url;
-            if (draw.accepted && !parentImg.classList.contains('accepted')) {
-                parentImg.classList.add('accepted');
-            } else if (!draw.accepted) {
-                parentImg.classList.remove('accepted');
-            }
-        });
+                imgSubmission.src = url;
+                if (draw.accepted && !parentImg.classList.contains('accepted')) {
+                    parentImg.classList.add('accepted');
+                } else if (!draw.accepted) {
+                    parentImg.classList.remove('accepted');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+
+            });
 
 
 

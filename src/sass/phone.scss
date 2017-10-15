@@ -49,6 +49,20 @@ canvas {
             width: inherit;
         }
     }
+    #uploading {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background: rgba(254, 254, 254, 0.5);
+        display: flex;
+        flex-direction: column;
+        #progressUpload {
+            width: 100%;
+        }
+        h4 {
+            margin: auto;
+        }
+    }
 }
 
 $img-user: 80px;

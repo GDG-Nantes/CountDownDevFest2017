@@ -81,7 +81,11 @@ function predictPromise(event) {
         console.log('ask predict api')
         return cmlePredictPromise(pixels);
     }).then((result) => {
-        console.log('Prediction results: ' + JSON.stringify(result, null, '\t'));
+        try {
+            console.log('Prediction results: ' + JSON.stringify(result, null, '\t'));
+        } catch (err) {
+            console.error(err);
+        }
         fs.unlinkSync(localfile);
         return result;
     });
