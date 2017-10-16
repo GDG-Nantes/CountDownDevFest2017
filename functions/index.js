@@ -79,12 +79,13 @@ exports.detectImage = functions.storage.object().onChange(event => {
 
         return prediction.predictPromise(event)
             .then((result) => {
-                updateTree(userId, drawId, result);
+                console.log('Got result for drawId : ' + drawId);
+                return updateTree(userId, drawId, result);
             })
             .catch((err) => {
                 console.log('Error trapped !');
                 console.error(err);
-                updateTree(userId, drawId);
+                return updateTree(userId, drawId);
             });;
     } catch (e) {
         console.log('Error trapped by catch !');
@@ -94,23 +95,39 @@ exports.detectImage = functions.storage.object().onChange(event => {
 });
 
 function updateTree(userId, drawId, result) {
-    admin.database().ref(`/drawUpload/${drawId}`).once('value', (snapshot) => {
-        if (snapshot && snapshot.val()) {
-            let snapshotFb = snapshot.val();
-            snapshotFb.tags = extractTags(result);
-            admin.database().ref(`/draw/${drawId}`).set(snapshotFb)
-                .then(() => admin.database().ref(`/drawUpload/${drawId}`).remove())
-                .then(() => console.log('finish manipulating image'))
-                .catch((reason) => console.log(reason));
+    return new Promise((resolve, reject) => {
+        console.log('Update tree !');
+        admin.database().ref(`/drawUpload/${drawId}`).once('value', (snapshot) => {
+            try {
+                console.log('prepare to update the tree');
+                if (snapshot && snapshot.val()) {
+                    let snapshotFb = snapshot.val();
+                    snapshotFb.tags = extractTags(result);
+                    admin.database().ref(`/draw/${drawId}`).set(snapshotFb)
+                        .then(() => admin.database().ref(`/drawUpload/${drawId}`).remove())
+                        .then(() => {
+                            console.log('finish manipulating image');
+                            resolve();
+                        })
+                        .catch((reason) => {
+                            console.log(reason);
+                            reject(reason);
+                        });
+                }
+            } catch (e) {
+                console.error(e);
+                reject(e);
+            }
+        }, (error) => {
+            console.error(error);
+            reject(error);
+        });
+        if (result) {
+            console.log('Prediction results from main page: ' + JSON.stringify(result, null, '\t'));
+        } else {
+            console.error('No result ! ');
         }
-    }, (error) => {
-        console.error(error);
     });
-    if (result) {
-        console.log('Prediction results from main page: ' + JSON.stringify(result, null, '\t'));
-    } else {
-        console.error('No result ! ');
-    }
 }
 
 function extractTags(result) {
@@ -123,13 +140,41 @@ function extractTags(result) {
     }
 
     try {
+        console.log('Enter Extract Tags');
         const tags = [];
         result.predictions.forEach(prediction => {
-            prediction.scores.forEach((score, index) => {
-                if (score > 0) {
-                    tags.push(dictionnary[+prediction.classes[index]]);
+            try {
+
+                console.log('Will log prediction');
+                console.log(JSON.stringify(prediction));
+                if (prediction.classes) {
+                    console.log('Classes : ' + prediction.classes + " / length dictionnary : " + dictionnary.length);
+                    let isArray = false;
+                    try {
+                        if (Array.isArray(prediction.classes)) {
+                            console.log('Classes is an array !');
+                            isArray = true;
+                            prediction.classes.forEach(indexClass => {
+                                if (dictionnary.length > +indexClass) {
+                                    tags.push(dictionnary[+indexClass]);
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                    if (!isArray && dictionnary.length > +prediction.classes) {
+                        console.log('Classes is not an array');
+                        console.log('Tag found : ' + dictionnary[+prediction.classes]);
+
+                        tags.push(dictionnary[+prediction.classes]);
+                    }
+                } else {
+                    console.log('No classes win :\'(');
                 }
-            });
+            } catch (e) {
+                console.error(e);
+            }
         });
         return tags.join('/');
     } catch (e) {

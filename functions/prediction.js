@@ -114,7 +114,7 @@ function cmlePredictPromise(pixelArray, callback) {
                     name: config.modelName,
                     resource: {
                         instances: [{
-                            inputs: pixelArray
+                            x: pixelArray
                         }]
                     }
                 };
