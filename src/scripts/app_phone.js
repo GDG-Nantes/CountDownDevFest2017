@@ -136,7 +136,7 @@ import {
                     drawCanvas.resetBoard();
                     document.getElementById('uploading').style.display = 'none';
                     document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
-                        message: 'Draw not submit, there was a problem.'
+                        message: 'Drawing not submited, there was a problem.'
                     });
                 },
                 () => {
@@ -147,7 +147,7 @@ import {
                     drawCanvas.resetBoard();
                     document.getElementById('uploading').style.display = 'none';
                     document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
-                        message: 'Draw submit! Thanks!'
+                        message: 'Drawing submited! Thanks!'
                     });
                 });
 
