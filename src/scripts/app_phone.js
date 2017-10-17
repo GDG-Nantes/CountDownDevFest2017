@@ -202,6 +202,8 @@ import {
                             document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
                                 message: 'You haven\'t yet submit drawings.'
                             });
+                            document.getElementById('btnLeft').disabled = true;
+                            document.getElementById('btnRight').disabled = true;
                         }
 
                     }, (err) => {
@@ -298,9 +300,11 @@ import {
         drawRef.getDownloadURL().then(url => {
                 imgSubmission.src = url;
                 if (draw.accepted && !parentImg.classList.contains('accepted')) {
+                    parentImg.classList.remove('rejected');
                     parentImg.classList.add('accepted');
                 } else if (!draw.accepted) {
                     parentImg.classList.remove('accepted');
+                    parentImg.classList.add('rejected');
                 }
             })
             .catch(err => {

@@ -47,6 +47,11 @@ canvas {
         justify-content: center;
         button {
             width: inherit;
+            margin: 15px;
+        }
+
+        .mdl-slider__container{
+            flex:1;
         }
     }
     #uploading {
@@ -109,7 +114,7 @@ $img-user: 80px;
         margin-top: 50px;
     }
     .parent-img::after {
-        content: 'Draw rejected';
+        content: 'You have no drawing submit yet';
         position: absolute;
         top: 10px;
         left: 0;
@@ -122,8 +127,11 @@ $img-user: 80px;
         height: 24px;
         display: inline-block;
     }
+    .parent-img.rejected::after {
+        content: 'Drawing rejected';
+    }
     .parent-img.accepted::after {
-        content: 'Draw Accepted';
+        content: 'Drawing Accepted';
     }
     img {
         width: calc(100% - 20px);
