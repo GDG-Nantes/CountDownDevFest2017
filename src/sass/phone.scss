@@ -49,9 +49,8 @@ canvas {
             width: inherit;
             margin: 15px;
         }
-
-        .mdl-slider__container{
-            flex:1;
+        .mdl-slider__container {
+            flex: 1;
         }
     }
     #uploading {
@@ -146,5 +145,11 @@ $img-user: 80px;
         button {
             margin: 30px;
         }
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    #game header .mdl-slider__container {
+        flex: inherit;
     }
 }
