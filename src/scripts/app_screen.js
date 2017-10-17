@@ -95,7 +95,7 @@ import {
 
             // When the element is create, we clean the board
             drawToShow.style.background = '#FFFFFF';
-            document.getElementById('proposition-text').innerHTML = "En attente de proposition";
+            document.getElementById('proposition-text').innerHTML = "Waiting for a draw";
 
         }, 500);
     }
@@ -216,8 +216,8 @@ import {
                             drawToShow.style.background = `url(${url})`;
                             drawToShow.style['background-size'] = 'contain';
                             const tags = (currentDraw.tags && currentDraw.tags.length > 0) ?
-                                `,\n Classification détectée : ${currentDraw.tags.split("/").join(' #')}` : ''
-                            document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}${tags}`;
+                                `,\n Classification detected : ${currentDraw.tags.split("/").join(' #')}` : ''
+                            document.getElementById('proposition-text').innerHTML = `Draw from ${currentDraw.user}${tags}`;
                             setTimeout(() => {
                                 // After we update the draw
                                 fireBaseApp.database().ref(`drawValidated/${currentKey}`).remove()
@@ -244,7 +244,7 @@ import {
 
             } else {
                 readyForNewDraw = true;
-                document.getElementById('proposition-text').innerHTML = "En attente de proposition";
+                document.getElementById('proposition-text').innerHTML = "Waiting for a draw";
             }
 
         }, (err) => {

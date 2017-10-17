@@ -53,10 +53,10 @@
         </header>
         <div class="mdl-layout__drawer">
             <img src="./assets/img/icon_128.png" id="img-user" hiddden>
-            <span id="name-user" class="mdl-layout-title">Non Connecté</span>
+            <span id="name-user" class="mdl-layout-title">Not connected</span>
             <nav class="mdl-navigation">
-                <a class="mdl-navigation__link" id="menu-game" href="#" hidden>Jeu</a>
-                <a class="mdl-navigation__link" id="menu-creations" href="#">Mes créations</a>
+                <a class="mdl-navigation__link" id="menu-game" href="#" hidden>Game</a>
+                <a class="mdl-navigation__link" id="menu-creations" href="#">My creations</a>
             </nav>
         </div>
         <main class="mdl-layout__content">
@@ -66,7 +66,7 @@
                         <h2 class="mdl-card__title-text">Login</h2>
                     </div>
                     <div class="mdl-card__supporting-text">
-                        Vous devez vous connecter pour Jouer !
+                        You have to connect you to play!
                     </div>
                     <div class="mdl-card__actions mdl-card--border">
                         <div id="firebaseui-auth-container"></div>
@@ -74,15 +74,13 @@
                 </div>
                 <div id="hello-msg" class="demo-card-wide mdl-card mdl-shadow--2dp" hidden>
                     <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Comment Jouer ?</h2>
+                        <h2 class="mdl-card__title-text">How to play?</h2>
                     </div>
                     <div class="mdl-card__supporting-text">
-                        Choississez votre pièce et votre couleur à l'aide du bouton de palette dans la barre de menu. Positionnez ensuite votre pièce
-                        sur la grille. Quand votre dessin est terminé, cliquez sur le bouton valider
-                    </div>
+                        Choose your color, the size of the brush and here we go, you can draw. When your draw of finish, clic on the "submit" button.                    </div>
                     <div class="mdl-card__actions mdl-card--border">
                         <button id="startBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                            Demarrer
+                            Start
                             <i class="material-icons">brush</i>
                         </button>
                     </div>
@@ -110,7 +108,7 @@
                         <h4>Uploading</h4>
                     </div>
                     <button id="btnSubmission" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                        Soumettre
+                        Sumbit
                     </button>
                 </div>
                 <div id="loading" hidden>

@@ -55,7 +55,7 @@ import {
 
         // We refused the current draw
         document.getElementById('btnSubmissionRefused').addEventListener('click', () => {
-            document.getElementById('proposition-text').innerHTML = "En attente de proposition";
+            document.getElementById('proposition-text').innerHTML = "Waiting for a proposition";
             const cloneCurrentDraw = JSON.parse(JSON.stringify(currentDraw));
             /*
                 When we refuse an object, we take a snapshot of it to avoid the reconstruction of the canvas.
@@ -80,7 +80,7 @@ import {
         });
 
         document.getElementById('btnSubmissionAccepted').addEventListener('click', () => {
-            document.getElementById('proposition-text').innerHTML = "En attente de proposition";
+            document.getElementById('proposition-text').innerHTML = "Waiting for a proposition";
             const cloneCurrentDraw = JSON.parse(JSON.stringify(currentDraw));
             // We save the state in the user tree
             cloneCurrentDraw.accepted = true;
@@ -133,7 +133,7 @@ import {
                         }
                         drawToShow.style.background = `url(${url})`;
                         drawToShow.style['background-size'] = 'contain';
-                        document.getElementById('proposition-text').innerHTML = `Proposition de ${currentDraw.user}`;
+                        document.getElementById('proposition-text').innerHTML = `Proposition from ${currentDraw.user}`;
                     })
                     .catch(err => {
                         localStorage['Err' + currentKey] = true;
@@ -143,7 +143,7 @@ import {
                     });
             } else {
                 readyForNewDraw = true;
-                document.getElementById('proposition-text').innerHTML = "En attente de proposition";
+                document.getElementById('proposition-text').innerHTML = "Waiting for a proposition";
             }
 
         }, function (err) {

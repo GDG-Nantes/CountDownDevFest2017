@@ -147,7 +147,7 @@ import {
                     drawCanvas.resetBoard();
                     document.getElementById('uploading').style.display = 'none';
                     document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
-                        message: 'Dessin non soumis, il y a eu un problème.'
+                        message: 'Draw not submit, there was a problem.'
                     });
                 },
                 () => {
@@ -158,7 +158,7 @@ import {
                     drawCanvas.resetBoard();
                     document.getElementById('uploading').style.display = 'none';
                     document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
-                        message: 'Dessin soumis ! Merci !'
+                        message: 'Draw submit! Thanks!'
                     });
                 });
 
@@ -217,13 +217,13 @@ import {
                         } else {
                             console.log('no draw !');
                             document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
-                                message: 'Vous n\'avez pas encore soumis de dessin.'
+                                message: 'You haven\'t yet submit drawings.'
                             });
                         }
 
                     }, (err) => {
                         document.querySelector('#snackbar-container').MaterialSnackbar.showSnackbar({
-                            message: 'Une erreur c\'est produite pendant la récupération des dessins'
+                            message: 'An error happen while getting drawings'
                         });
                         manageStateDivs('game');
                         console.error(err);
