@@ -57,23 +57,17 @@ import {
          * Management of Cinematic Buttons
          */
         const startBtn = document.getElementById('startBtn');
-        const helpBtn = document.getElementById('help');
 
         const streamStart = Rx.Observable
             .fromEvent(startBtn, 'click')
             .map(() => 'start');
 
-        const streamHelp = Rx.Observable
-            .fromEvent(helpBtn, 'click')
-            .map(() => 'help');
 
-        streamStart.merge(streamHelp)
-            .subscribe((state) => {
+        streamStart.subscribe((state) => {
                 if (state === 'start') {
                     document.getElementById('hello-msg').setAttribute("hidden", "");
                     document.getElementById('game').removeAttribute('hidden');
                     document.getElementById('color-picker2').removeAttribute('hidden');
-                    document.getElementById('help').removeAttribute('hidden');
                     if (!gameInit) {
                         document.getElementById('loading').removeAttribute('hidden');
                         // Timeout needed to start the rendering of loading animation (else will not be show)
@@ -83,11 +77,6 @@ import {
                             document.getElementById('loading').setAttribute('hidden', '')
                         }, 50);
                     }
-                } else if (state === 'help') {
-                    document.getElementById('hello-msg').removeAttribute("hidden");
-                    document.getElementById('game').setAttribute('hidden', "");
-                    document.getElementById('color-picker2').setAttribute('hidden', "");
-                    document.getElementById('help').setAttribute('hidden', "");
                 }
             })
 
@@ -171,7 +160,6 @@ import {
         const menuGame = document.getElementById('menu-game');
         const menuCreations = document.getElementById('menu-creations');
         const menuSlider = document.getElementById('slider-width');
-        const menuEraser = document.getElementById('menuEraser');
         const menuBrush = document.getElementById('menuBrush');
         const menuClear = document.getElementById('menuClear');
 
@@ -184,10 +172,6 @@ import {
             .fromEvent(menuCreations, 'click')
             .map(() => 'creations');
 
-        const streamEraser = Rx.Observable
-            .fromEvent(menuEraser, 'click')
-            .map(() => 'eraser');
-
         const streamBrush = Rx.Observable
             .fromEvent(menuBrush, 'click')
             .map(() => 'brush');
@@ -197,7 +181,6 @@ import {
             .map(() => 'clear');
 
         streamGame.merge(streamCreations)
-            .merge(streamEraser)
             .merge(streamBrush)
             .merge(streamClear)
             .subscribe((state) => {
@@ -230,19 +213,14 @@ import {
                         // error callback triggered with PERMISSION_DENIED
                     });
 
-                } else if (state === 'eraser') {
-                    if (!menuEraser.classList.contains('mdl-button--colored')) {
-                        menuEraser.classList.add('mdl-button--colored');
-                        menuBrush.classList.remove('mdl-button--colored');
-                        drawCanvas.toggleEraser();
-                    }
-
                 } else if (state === 'brush') {
-                    if (!menuBrush.classList.contains('mdl-button--colored')) {
-                        menuBrush.classList.add('mdl-button--colored');
-                        menuEraser.classList.remove('mdl-button--colored');
-                        drawCanvas.toggleEraser();
+                    if (drawCanvas.getEraserMode()){
+                        document.querySelector('#menuBrush i').innerHTML = 'brush';
+                    }else{
+                        document.querySelector('#menuBrush i').innerHTML = 'healing';
+
                     }
+                    drawCanvas.toggleEraser();
 
                 } else if (state === 'clear') {
                     drawCanvas.resetBoard();

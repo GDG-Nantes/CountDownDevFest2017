@@ -68,6 +68,10 @@ export class DrawCanvas {
         this.canvas.renderAll();
     }
 
+    getEraserMode(){
+        return this.eraserMode;
+    }
+
     toggleEraser() {
         this.eraserMode = !this.eraserMode;
         if (this.eraserMode) {

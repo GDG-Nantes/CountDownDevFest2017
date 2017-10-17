@@ -51,7 +51,10 @@ import {
         fireBaseApp.database().ref('draw').on('child_added', getNextDraw);
 
         // When a draw is removed (if an other moderator validate for example) on the firebase object, we look at it
-        fireBaseApp.database().ref('draw').on('child_removed', getNextDraw);
+        fireBaseApp.database().ref('draw').on('child_removed', ()=>{
+            readyForNewDraw = true;
+            getNextDraw();
+        });
 
         // We refused the current draw
         document.getElementById('btnSubmissionRefused').addEventListener('click', () => {
