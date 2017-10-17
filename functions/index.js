@@ -10,23 +10,6 @@ const dictionnary = require('./dictionnary').dictionnary;
 const admin = require('firebase-admin');
 //admin.initializeApp(functions.config().firebase);
 
-
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-exports.helloWorld = functions.https.onRequest((request, response) => {
-
-    admin.database().ref(`/config`).once('value', (snapshot) => {
-        if (snapshot && snapshot.val()) {
-            let snapshotFb = snapshot.val();
-            let keys = Object.keys(snapshotFb);
-            keys.forEach((key) => {
-                response.send(JSON.stringify(snapshotFb[key]));
-            });
-        }
-    });
-
-});
 /**
  * Method trigger when an image is upload
  */
@@ -54,7 +37,7 @@ exports.detectImage = functions.storage.object().onChange(event => {
     // Get the file name.
     const fileName = path.basename(filePath);
     // Exit if the image is already a thumbnail.
-    if (fileName.startsWith('thumb_')) {
+    if (fileName.startsWith('convert_')) {
         console.log('Already a Thumbnail.');
         return;
     }

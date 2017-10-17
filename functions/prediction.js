@@ -56,39 +56,54 @@ admin.database().ref(`/config`).once('value', (snapshot) => {
 //   ]);
 // }
 
+let tempDrawId = '';
+
 function predictPromise(event) {
     console.log('Start Predict Method !');
     // Download file locally and convert to an array.
     const bucket = storage.bucket(event.data.bucket);
     let fileurl = event.data.mediaLink;
     let gcsFilename = event.data.name;
+    tempDrawId = path.basename(gcsFilename, '.jpg'); // TODO TO REMOVE
 
     let filename = path.basename(gcsFilename);
     let localfile = path.join(os.tmpdir(), filename);
     console.log('Using file ' + gcsFilename);
     return bucket.file(gcsFilename).download({
-        destination: localfile
-    }).then(() => {
-        console.log('Image will be reduce', localfile);
-        // Generate a thumbnail using ImageMagick.
-        return spawn('convert', [localfile, '-thumbnail', '28x28>', localfile]);
-    }).then(() => {
-        console.log('About to convert to grayscale...');
-        return toGrayscaleArrayPromise(localfile);
-    }).then((pixels) => {
-        console.log('Converted to grayscale array.');
-        console.log(pixels);
-        console.log('ask predict api')
-        return cmlePredictPromise(pixels);
-    }).then((result) => {
-        try {
-            console.log('Prediction results: ' + JSON.stringify(result, null, '\t'));
-        } catch (err) {
-            console.error(err);
-        }
-        fs.unlinkSync(localfile);
-        return result;
-    });
+            destination: localfile
+        }).then(() => {
+            console.log('Image will be grayscale', localfile);
+            // Generate a thumbnail using ImageMagick.
+            return spawn('convert', [localfile, '-negate', '-threshold', '0', '-negate', localfile]);
+        })
+        .then(() => {
+            console.log('Image will be reduce', localfile);
+            // Generate a thumbnail using ImageMagick.
+            return spawn('convert', [localfile, '-thumbnail', '28x28>', localfile]);
+        }).then(() => {
+            const thumbFileName = `convert_${filename}`;
+            const thumbFilePath = path.join(path.dirname(gcsFilename), thumbFileName);
+            // Uploading the thumbnail.
+            return bucket.upload(localfile, {
+                destination: thumbFilePath
+            });
+        }).then(() => {
+            console.log('About to convert to grayscale...');
+            return toGrayscaleArrayPromise(localfile);
+        }).then((pixels) => {
+            console.log('Converted to grayscale array.');
+            console.log(pixels);
+            console.log('ask predict api')
+            return cmlePredictPromise(pixels);
+        }).then((result) => {
+            try {
+                console.log('Prediction results: ' + JSON.stringify(result, null, '\t'));
+            } catch (err) {
+                console.error(err);
+            }
+            fs.unlinkSync(localfile);
+            return result;
+        });
 }
 
 function cmlePredictPromise(pixelArray, callback) {
@@ -118,7 +133,7 @@ function cmlePredictPromise(pixelArray, callback) {
                         }]
                     }
                 };
-                console.log(params.resource);
+                console.log(JSON.stringify(params.resource));
                 ml.projects.predict(params, (err, result) => {
                     if (err) {
                         reject(err);
@@ -152,8 +167,8 @@ function toGrayscaleArrayPromise(filename) {
 
             let grayscalePixels = new Array();
             // TODO: this could be cleaned up.
-            for (let x = 0; x < pixels.shape[0]; x++) {
-                for (let y = 0; y < pixels.shape[1]; y++) {
+            for (let y = 0; y < pixels.shape[1]; y++) {
+                for (let x = 0; x < pixels.shape[0]; x++) {
                     let red = pixels.get(x, y, 0);
                     let green = pixels.get(x, y, 1);
                     let blue = pixels.get(x, y, 2);
@@ -163,7 +178,7 @@ function toGrayscaleArrayPromise(filename) {
                     // https://stackoverflow.com/questions/25463005/how-to-convert-an-image-to-a-0-255-grey-scale-image
                     let gray = parseInt((0.299 * red) + (0.587 * green) + (0.114 * blue));
 
-                    grayscalePixels.push(gray);
+                    grayscalePixels.push(255 - gray);
                     if (gray < 0 || gray > 255) {
                         console.warn(`Invalid gray value of ${gray} found.`);
                     }
